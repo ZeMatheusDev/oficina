@@ -533,7 +533,13 @@ INSERT IGNORE INTO `permissions` (`id`, `name`, `guard_name`, `ordem`, `created_
 	(345, 'create.ConfigCarros', 'web', 6, NULL, NULL),
 	(346, 'edit.ConfigCarros', 'web', 6, NULL, NULL),
 	(347, 'duplicate.ConfigCarros', 'web', 6, NULL, NULL),
-	(348, 'delete.ConfigCarros', 'web', 6, NULL, NULL);
+	(348, 'delete.ConfigCarros', 'web', 6, NULL, NULL),
+	(349, 'list.ConfigMotos', 'web', 7, NULL, NULL),
+	(350, 'create.ConfigMotos', 'web', 7, NULL, NULL),
+	(351, 'edit.ConfigMotos', 'web', 7, NULL, NULL),
+	(352, 'duplicate.ConfigMotos', 'web', 7, NULL, NULL),
+	(353, 'delete.ConfigMotos', 'web', 7, NULL, NULL),
+	(354, 'list.DashboardCalendario', 'web', 8, NULL, NULL);
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela projeto_estagio.personal_access_tokens
@@ -604,7 +610,15 @@ INSERT IGNORE INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 	(345, 6),
 	(346, 6),
 	(347, 6),
-	(348, 6);
+	(348, 6),
+	(349, 6),
+	(350, 6),
+	(351, 6),
+	(352, 6),
+	(353, 6),
+	(354, 6);
+
+	
 
 /*!40000 ALTER TABLE `role_has_permissions` ENABLE KEYS */;
 
