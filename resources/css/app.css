@@ -1,0 +1,124 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body{
+    zoom: 0.78;
+}
+
+/* Works on Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(228, 228, 228);
+  }
+  
+  /* Works on Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  *::-webkit-scrollbar-track {
+    background: rgb(255, 255, 255);
+  }
+  
+  *::-webkit-scrollbar-thumb {
+    background-color:rgb(228, 228, 228);
+    border-radius: 20px;
+    border: 3px solid rgb(255, 255, 255);
+  }
+  
+.p-float-label input {
+    height: 40px !important;
+    font-size: 12px !important;
+    width: 100%;
+}
+
+.p-inputtextarea {
+    font-size: 13px !important
+}
+
+.p-dropdown {
+    height: 40px !important;
+    width: 100%;
+}
+
+.p-multiselect {
+    height: 40px !important;
+    width: 100%;
+}
+
+.p-inputnumber {
+    height: 40px !important;
+    width: 100%;
+}
+
+.p-float-label .p-input-icon-right {
+    margin-top: 0px
+}
+
+.p-float-label .p-dropdown {
+    height: 40px !important;
+    font-size: 12px !important;
+}
+
+.p-float-label .p-dropdown-trigger-icon {
+    font-size: 10px;
+    margin-top: 3px;
+}
+
+.p-dropdown .p-dropdown-label {
+    font-size: 13px;
+    margin-top: -5px !important;
+}
+
+.p-dropdown-panel .p-dropdown-filter {
+    font-size: 13px;
+    height: 40px !important;
+}
+
+.p-multiselect .p-multiselect-label {
+    font-size: 13px;
+    margin-top: -5px !important;
+}
+
+.p-multiselect-panel .p-multiselect-filter {
+    font-size: 13px;
+    height: 40px !important;
+}
+
+.p-multiselect-items-wrapper .p-multiselect-empty-message {
+    font-size: 13px;
+    margin-top: -2px !important;
+}
+
+.p-dropdown-items-wrapper .p-dropdown-empty-message {
+    font-size: 13px;
+    margin-top: -2px !important;
+}
+
+.p-dropdown-items-wrapper .p-dropdown-item {
+    font-size: 13px !important
+}
+
+.p-multiselect-items-wrapper .p-multiselect-item {
+    font-size: 14px !important
+}
+
+
+.p-float-label label {
+    font-size: 13px !important;
+}
+
+.p-password-input {
+    width: 100%;
+}
+
+.p-password-panel {
+    font-size: 13px !important
+}
+
+
+.pi-check::before {
+    margin-top: 2.3px !important;
+    margin-left: 1.2px !important;
+}
