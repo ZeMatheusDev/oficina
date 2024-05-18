@@ -60,12 +60,15 @@ class Company extends Controller
         $companies = $query->paginate(($request->limit ?: 10))
             ->appends(['page', 'orderBy', 'searchBy', 'limit']);
 
+            $usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+
             $Registros = $this->Registros();
 
         return Inertia::render('Company/List', [
             'columnsTable' => $columnsTable,
             'companies' => $companies,
             "Filtros" => $data["companies"],
+            "hasRole" => $usuario != null,
             "Registros" => $Registros,
         ]);
     }
@@ -135,9 +138,11 @@ class Company extends Controller
         $pis_situacao_tributaria = DB::table("pis_situacao_tributaria")->orderBy('descricao', 'asc')->get();
         $cofins_situacao_tributaria = DB::table("cofins_situacao_tributaria")->orderBy('descricao', 'asc')->get();
 
+        $usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 
-
-        return Inertia::render('Company/Create',['Origem'=>$icms_origem,'Tributaria'=>$icms_situacao_tributaria, 'Pis' => $pis_situacao_tributaria, 'Cofins'=>$cofins_situacao_tributaria]);
+        return Inertia::render('Company/Create',['Origem'=>$icms_origem,'Tributaria'=>$icms_situacao_tributaria, 'Pis' => $pis_situacao_tributaria,
+        "hasRole" => $usuario != null,
+        'Cofins'=>$cofins_situacao_tributaria]);
     }
 
     public function store(Request $request)
@@ -212,11 +217,12 @@ class Company extends Controller
 
         $pis_situacao_tributaria = DB::table("pis_situacao_tributaria")->orderBy('descricao', 'asc')->get();
         $cofins_situacao_tributaria = DB::table("cofins_situacao_tributaria")->orderBy('descricao', 'asc')->get();
-
+        $usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
         $company = ModelsCompany::findOrFail($companyId);
         return Inertia::render('Company/Edit', [
             'company' => $company,
             'Origem'=>$icms_origem,
+            "hasRole" => $usuario != null,
             'Tributaria'=>$icms_situacao_tributaria,
             'Pis' => $pis_situacao_tributaria,
             'Cofins' => $cofins_situacao_tributaria,

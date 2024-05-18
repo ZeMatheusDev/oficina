@@ -118,11 +118,13 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$Logs = new logs; 
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
 			$Registros = $this->Registros();
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 			$Cidades = DB::table("util_cidades")->where("deleted", '0')->get();  
 
 			return Inertia::render("ConfigCarros/List", [
 				"columnsTable" => $columnsTable,
 				"ConfigCarros" => $ConfigCarros,
+				"hasRole" => $usuario != null,
 				"Cidades" => $Cidades,
 				"Filtros" => $data["ConfigCarros"],
 				"Registros" => $Registros,
@@ -195,9 +197,11 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$Acao = "Abriu a Tela de Cadastro do Módulo de ConfigCarros";
 			$Logs = new logs; 
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 
 			return Inertia::render("ConfigCarros/Create",[
 				'Cidades' => $Cidades,
+				"hasRole" => $usuario != null,
 			]);
 
 		} catch (Exception $e) {	
@@ -332,10 +336,13 @@ $save->token = md5(date("Y-m-d H:i:s").rand(0,999999999));
 			$Cidades = DB::table("util_cidades")->where("deleted", '0')->get();  
 			$Acao = "Abriu a Tela de Edição do Módulo de ConfigCarros";
 			$Logs = new logs; 
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao,$AcaoID);
 			return Inertia::render("ConfigCarros/Edit", [
 				"ConfigCarros" => $ConfigCarros,
 				"Cidades" => $Cidades,
+				"hasRole" => $usuario != null,
+
 			]);
 
 		} catch (Exception $e) {	

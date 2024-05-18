@@ -76,12 +76,16 @@
 	
 			$Acao = "Acessou a listagem do Módulo de LogsUsers";
 			$Logs = new logs; 
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
+
+			
 	
 			return Inertia::render("LogsUsers/List", [
 				"columnsTable" => $columnsTable,
 				"logsUsuario" => $logsUsuario,
 				"Filtros" => $data["logs"],
+				"hasRole" => $usuario != null,
 			]);
 
 		} catch (Exception $e) {	
@@ -132,7 +136,12 @@
 			$Logs = new logs; 
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
 
-			return Inertia::render("LogsUsers/Create");
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+
+			return Inertia::render("LogsUsers/Create", [
+				"hasRole" => $usuario != null,
+
+			]);
 
 		} catch (Exception $e) {	
 			
@@ -290,9 +299,11 @@ $save->id_ref = $request->id_ref;
 			$Acao = "Opened the Module Editing Screen of LogsUsers";
 			$Logs = new logs; 
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao,$AcaoID);
-	
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+
 			return Inertia::render("LogsUsers/Edit", [
-				"logsUsuario" => $logsUsuario
+				"logsUsuario" => $logsUsuario,
+				"hasRole" => $usuario != null,
 			]);
 
 		} catch (Exception $e) {	

@@ -21,14 +21,16 @@
 
 			try{
 
-			
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 			$Acao = "Acessou a listagem do Módulo de Dashboard Financeiro";
 			$Logs = new logs; 
 			// $Registros = $this->Registros();
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
 	
 			return Inertia::render("Dashboard/Dashboard",
-			[	"AlertaError"=>$id,	]);
+			[	"AlertaError"=>$id,
+				"hasRole" => $usuario != null,
+			]);
 
 		} catch (Exception $e) {	
 			
@@ -52,7 +54,8 @@
 		{
 			$Modulo = "Calendário";
 			$permUser = Auth::user()->hasPermissionTo("list.DashboardCalendario");
-		
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+
 			if (!$permUser) {
 				return redirect()->route("list.Dashboard",['id'=>'1']);
 			}
@@ -60,7 +63,7 @@
 			try{
 				$solicitationEvents = [];
 				
-			return Inertia::render("Dashboard/Calendario",['Solicitations' => $solicitationEvents]);
+			return Inertia::render("Dashboard/Calendario",['Solicitations' => $solicitationEvents, "hasRole" => $usuario != null,]);
 
 		} catch (Exception $e) {	
 			

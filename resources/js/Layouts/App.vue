@@ -179,7 +179,8 @@
           <span v-show="!toggleTextMenu">Usuários &nbsp;&nbsp;&nbsp;&nbsp;</span>
         </li>
         </Link>
-        <Link as="button" :href="route('list.permission')" v-if="$page.props.userPermissions.includes('list.users')">
+          
+        <Link as="button" :href="route('list.permission')" v-if="$page.props.userPermissions.includes('list.users') && hasRole">
         <li class="flex text-gray-500/80 font-semibold space-x-3 items-center text-[14px] mt-2 hover:text-proconph">
           <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
             <path d="M0 0h24v24H0V0z" fill="none"></path>
@@ -447,6 +448,10 @@ const dropdownConfigConf = ref(false);
 const dropdownAudit = ref(false);
 const dropdownAuditConf = ref(false);
 
+const props = defineProps({
+  Usuario: Object,
+  hasRole: Boolean,
+})
 const dropdownReports = ref(false);
 const dropdownReportsConf = ref(false);
 

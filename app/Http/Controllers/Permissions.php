@@ -19,12 +19,13 @@ class Permissions extends Controller
     public function render(Request $request)
     {
         
-   
+        $usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
         $roles = Role::paginate(10);
 
         return Inertia::render('Permission/List')
             ->with([
-                'roles' => $roles
+                "hasRole" => $usuario != null,
+                'roles' => $roles,
             ]);
 
     }
@@ -36,11 +37,15 @@ class Permissions extends Controller
         if (!$permUser) {
             return redirect()->route("list.Dashboard",['id'=>'1']);
         }
+        $usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+
 
         $roles = Role::all();
         return Inertia::render('Permission/Create')
             ->with([
-                'roles' => $roles
+                'roles' => $roles,
+                "hasRole" => $usuario != null,
+
             ]);
     }
 
@@ -70,12 +75,15 @@ class Permissions extends Controller
             return redirect()->route("list.Dashboard",['id'=>'1']);
         }
 
+        $usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+
         $role = Role::findOrFail($roleId);
         $role->load(['permissions']);
 
         return Inertia::render('Permission/Edit')
             ->with([
                 'role' => $role,
+                "hasRole" => $usuario != null,
             ]);
     }
 

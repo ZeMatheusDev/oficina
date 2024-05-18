@@ -126,10 +126,11 @@ class ConfigMotos extends Controller
 			$Logs = new logs;
 			$Registra = $Logs->RegistraLog(1, $Modulo, $Acao);
 			$Registros = $this->Registros();
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 			return Inertia::render("ConfigMotos/List", [
 				"columnsTable" => $columnsTable,
 				"ConfigMotos" => $ConfigMotos,
-
+				"hasRole" => $usuario != null,
 				"Filtros" => $data["ConfigMotos"],
 				"Registros" => $Registros,
 
@@ -198,9 +199,11 @@ class ConfigMotos extends Controller
 			$Acao = "Abriu a Tela de Cadastro do Módulo de ConfigMotos";
 			$Logs = new logs;
 			$Registra = $Logs->RegistraLog(1, $Modulo, $Acao);
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 
 			return Inertia::render("ConfigMotos/Create", [
 				'Cidades' => $Cidades,
+				"hasRole" => $usuario != null,
 			]);
 		} catch (Exception $e) {
 
@@ -335,9 +338,11 @@ class ConfigMotos extends Controller
 			$Acao = "Abriu a Tela de Edição do Módulo de ConfigMotos";
 			$Logs = new logs;
 			$Registra = $Logs->RegistraLog(1, $Modulo, $Acao, $AcaoID);
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 
 			return Inertia::render("ConfigMotos/Edit", [
 				"ConfigMotos" => $ConfigMotos,
+				"hasRole" => $usuario != null,
 				"Cidades" => $Cidades,
 			]);
 		} catch (Exception $e) {

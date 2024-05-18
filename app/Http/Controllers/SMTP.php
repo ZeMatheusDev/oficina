@@ -87,8 +87,10 @@ if(isset($data["SMTP"]["orderBy"])){
 			$Registros = $this->Registros();
 			$Logs = new logs; 
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
-	
-			return Inertia::render("SMTP/List", [
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+
+			return Inertia::render("SMTP/List", [	
+				"hasRole" => $usuario != null,
 				"columnsTable" => $columnsTable,
 				"Registros" => $Registros,
 				"SMTP" => $SMTP,
@@ -162,8 +164,11 @@ if(isset($data["SMTP"]["orderBy"])){
 			$Acao = "Abriu a Tela de Cadastro do Módulo de SMTP";
 			$Logs = new logs; 
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 
-			return Inertia::render("SMTP/Create");
+			return Inertia::render("SMTP/Create", [		
+				"hasRole" => $usuario != null,
+			]);
 
 		} catch (Exception $e) {	
 			
@@ -267,9 +272,11 @@ if(isset($data["SMTP"]["orderBy"])){
 			$Acao = "Abriu a Tela de Edição do Módulo de SMTP";
 			$Logs = new logs; 
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao,0);
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 	
 			return Inertia::render("SMTP/Edit", [
-				"SMTP" => $SMTP
+				"SMTP" => $SMTP,
+				"hasRole" => $usuario != null,
 			]);
 
 		} catch (Exception $e) {	
