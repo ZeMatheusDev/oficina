@@ -92,6 +92,11 @@ class ConfigMotos extends Controller
 				$ConfigMotos = $ConfigMotos->Where("config_motos.cor",  "like", "%" . $AplicaFiltro . "%");
 			}
 
+			if (isset($data["ConfigMotos"]["valor_compra"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["valor_compra"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.valor_compra",  "like", "%" . $AplicaFiltro . "%");
+			}
+
 			if (isset($data["ConfigMotos"]["nome_dono"])) {
 				$AplicaFiltro = $data["ConfigMotos"]["nome_dono"];
 				$ConfigMotos = $ConfigMotos->Where("config_motos.nome_dono",  "like", "%" . $AplicaFiltro . "%");
@@ -121,7 +126,6 @@ class ConfigMotos extends Controller
 			$Logs = new logs;
 			$Registra = $Logs->RegistraLog(1, $Modulo, $Acao);
 			$Registros = $this->Registros();
-
 			return Inertia::render("ConfigMotos/List", [
 				"columnsTable" => $columnsTable,
 				"ConfigMotos" => $ConfigMotos,
@@ -189,12 +193,15 @@ class ConfigMotos extends Controller
 		try {
 
 
+			$Cidades = DB::table("util_cidades")->where("deleted", '0')->get();  			
 
 			$Acao = "Abriu a Tela de Cadastro do Módulo de ConfigMotos";
 			$Logs = new logs;
 			$Registra = $Logs->RegistraLog(1, $Modulo, $Acao);
 
-			return Inertia::render("ConfigMotos/Create", []);
+			return Inertia::render("ConfigMotos/Create", [
+				'Cidades' => $Cidades,
+			]);
 		} catch (Exception $e) {
 
 			$Error = $e->getMessage();
@@ -233,7 +240,25 @@ class ConfigMotos extends Controller
 
 
 			$data = Session::all();
-
+			$url = null;
+			$rules = "png,jpg,jpeg";
+			$FormatosLiberados = explode(",", $rules);    
+			if($request->hasFile("anexo")){
+				if($request->file("anexo")->isValid()){
+					if (in_array($request->file("anexo")->extension(),$FormatosLiberados)) {
+						$ext = $request->file("anexo")->extension();						
+						$anexo = $request->file("anexo")->store("ConfigMotos/1");
+						$data = date("d_m_Y H_i_s");
+						$NovoNome = "AnexoEnviado_($data).$ext";
+						Storage::move($anexo, "ConfigMotos/1/$NovoNome");
+						$url = "ConfigMotos/1/".$NovoNome;						
+						$url = str_replace("/","-",$url);		
+					} else {
+						$ext = $request->file("anexo")->extension();
+						return redirect()->route("form.store.ConfigMotos")->withErrors(["msg" => "Atenção o formato enviado na anexo foi: $ext, só são permitidos os seguintes formatos: $rules ."]);
+						}
+					}					
+			}
 
 
 
@@ -241,8 +266,11 @@ class ConfigMotos extends Controller
 			//MODELO DE INSERT PARA VOCE FAZER COM TODAS AS COLUNAS DO BANCO DE DADOS, MENOS ID, DELETED E UPDATED_AT
 			$save->nome = $request->nome;
 			$save->marca = $request->marca;
+			$save->cidade = $request->cidade;
+			$save->anexo = $url;
 			$save->cor = $request->cor;
 			$save->nome_dono = $request->nome_dono;
+			$save->valor_compra = $request->valor_compra;
 			$save->observacoes = $request->observacoes;
 			
 
@@ -293,6 +321,7 @@ class ConfigMotos extends Controller
 
 		try {
 
+			$Cidades = DB::table("util_cidades")->where("deleted", '0')->get();  
 
 
 			$AcaoID = $this->return_id($IDConfigMotos);
@@ -309,7 +338,7 @@ class ConfigMotos extends Controller
 
 			return Inertia::render("ConfigMotos/Edit", [
 				"ConfigMotos" => $ConfigMotos,
-
+				"Cidades" => $Cidades,
 			]);
 		} catch (Exception $e) {
 
@@ -341,17 +370,43 @@ class ConfigMotos extends Controller
 
 		try {
 
-
+			if(!isset($id)){ $id = 0; }
+			$AnexoExiste = DB::table("config_motos")->where("token",$id)->first();
+			$url = null;
+			$rules = "png,jpg,jpeg";
+			$FormatosLiberados = explode(",", $rules);    
+			if($request->hasFile("anexo")){
+				if($request->file("anexo")->isValid()){
+					if (in_array($request->file("anexo")->extension(),$FormatosLiberados)) {
+						$ext = $request->file("anexo")->extension();
+						$anexo = $request->file("anexo")->store("ConfigMotos/1");
+						$data = date("d_m_Y H_i_s");
+						$NovoNome = "AnexoEnviado_($data).$ext";
+						Storage::move($anexo, "ConfigMotos/1/$NovoNome");
+						$url = "ConfigMotos/1/".$NovoNome;						
+						$url = str_replace("/","-",$url);
+						if($AnexoExiste){	
+						$AnexoAntigo = str_replace("-","/",$AnexoExiste->anexo);			
+						Storage::delete($AnexoAntigo);
+						}
+					} else {
+						$ext = $request->file("anexo")->extension();
+						return redirect()->route("form.store.ConfigMotos",["id"=>$id])->withErrors(["msg" => "Atenção o formato enviado na anexo foi: $ext, só são permitidos os seguintes formatos: $rules ."]);
+						}
+					}					
+			}
 			$AcaoID = $this->return_id($id);
 
 
 
 			$save = new stdClass;
-
+			if($url){ $save->anexo = $url;}
 			$save->nome = $request->nome;
+			$save->cidade = $request->cidade;
 			$save->marca = $request->marca;
 			$save->cor = $request->cor;
 			$save->nome_dono = $request->nome_dono;
+			$save->valor_compra = $request->valor_compra;
 			$save->observacoes = $request->observacoes;
 			//MODELO DE INSERT PARA VOCE FAZER COM TODAS AS COLUNAS DO BANCO DE DADOS, MENOS ID, DELETED E UPDATED_AT
 			
@@ -607,7 +662,6 @@ class ConfigMotos extends Controller
 			$ConfigMotos = $ConfigMotos->Where("config_motos.created_at",  "like", "%" . $AplicaFiltro . "%");
 		}
 	
-
 		$ConfigMotos = $ConfigMotos->get();
 
 		$Dadosconfig_motos = [];
@@ -620,7 +674,15 @@ class ConfigMotos extends Controller
 			}
 			$Dadosconfig_motos[] = [
 				//MODELO DE CA,MPO PARA VOCE COLOCAR AQUI, PARA CADA COLUNA DO BANCO DE DADOS DEVERÁ TER UM, EXCLUIR O ID, DELETED E UPDATED_AT
-				'nome' => $config_motoss->nome,				
+				'nome' => $config_motoss->nome,	
+				'marca' => $config_motoss->marca,	
+				'cor' => $config_motoss->cor,				
+				'nome_dono' => $config_motoss->nome_dono,				
+				'observacoes' => $config_motoss->observacoes,				
+				'valor_compra' => $config_motoss->valor_compra,				
+				'status' => $config_motoss->status,				
+				'Data de Cadastro' => $config_motoss->created_at,				
+
 			
 			];
 		}
@@ -644,12 +706,11 @@ class ConfigMotos extends Controller
 			// Arquivo foi deletado com sucesso
 		}
 
-		$cabecalhoAba1 = array('nome', 'placa', 'modelo', 'ano', 'cor', 'valor_compra', 'observacao', 'status', 'Data de Cadastro');
+		$cabecalhoAba1 = array('nome', 'marca', 'cor', 'nome_dono', 'observacoes', 'valor_compra', 'status', 'Data de Cadastro');
 		$spreadsheet = new Spreadsheet();
 		$sheet = $spreadsheet->getActiveSheet();
 
 		$config_motos = $this->DadosRelatorio();
-
 		// Define o título da primeira aba
 		$spreadsheet->setActiveSheetIndex(0);
 		$spreadsheet->getActiveSheet()->setTitle("ConfigMotos");

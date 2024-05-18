@@ -6,7 +6,9 @@ use App\Enums\Status;
 use App\Mail\SendLinkForgotPassword;
 use App\Models\ForgotPassword;
 use App\Models\User;
+use App\Models\ModelHasRoles;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
@@ -47,21 +49,46 @@ class Login extends Controller
             ->where('status', '1')
             ->first(['empresa']);
 
-
         if (!$user) {
             return redirect("login")->withErrors('Usuário não localizado.');
         }
-   
 
         $this->user = $user;
         
         $this->setSessionData();
-
         if (Auth::attempt($credentials)) {
             return redirect()->route('home');
         }
 
         return redirect("login")->withErrors('As credenciais informadas estão inválidas!');
+    }
+
+    public function cadastro(){
+        return Inertia::render('Auth/Cadastro');
+    }
+
+    public function cadastrar(Request $request){
+        // como ja coloquei a verificação pelo front vue impedindo o envio dos inputs com varios characteres, nao irei fazer validate
+        $user = new User();
+        $user->empresa = 1;
+        $user->name = $request->nome;
+        $user->email = $request->email;
+        $user->profile_picture = '';
+        $user->status = 1;
+        $user->is_master = 0;
+        $user->phone = $request->numero;
+        $user->password =  Hash::make($request->password);
+        $user->created_at =  now();
+        $user->updated_at =  now();
+        $user->temp_password =  0;
+        $user->save();
+        $pegandoUsuario = DB::table('users')->where('email', $request->email)->first();
+        $model = new ModelHasRoles();
+        $model->role_id = 8;
+        $model->model_type = 'App\\Models\\User';
+        $model->model_id = $pegandoUsuario->id;
+        $model->save();
+        return redirect()->route('login');
     }
 
     public function setSessionData()

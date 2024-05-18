@@ -197,6 +197,10 @@ Route::post('/login', [Login::class, 'login'])->name('action.login');
 
 Route::get('/esqueci-minha-senha', [Login::class, 'forgotPassword'])->name('forgot.password');
 
+Route::get('/cadastro', [Login::class, 'cadastro'])->name('cadastro');
+
+Route::POST('/cadastrar', [Login::class, 'cadastrar'])->name('cadastrar');
+
 Route::post('/esqueci-minha-senha', [Login::class, 'recoveryPasswordSend'])->name('forgot.password.send');
 
 Route::get('/recuperar-minha-senha', [Login::class, 'recoveryPassword'])->name('recovery.password');

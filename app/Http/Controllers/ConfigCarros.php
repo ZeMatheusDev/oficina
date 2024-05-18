@@ -333,7 +333,6 @@ $save->token = md5(date("Y-m-d H:i:s").rand(0,999999999));
 			$Acao = "Abriu a Tela de Edição do Módulo de ConfigCarros";
 			$Logs = new logs; 
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao,$AcaoID);
-	
 			return Inertia::render("ConfigCarros/Edit", [
 				"ConfigCarros" => $ConfigCarros,
 				"Cidades" => $Cidades,
@@ -403,6 +402,7 @@ $save->token = md5(date("Y-m-d H:i:s").rand(0,999999999));
 				$save->nome = $request->nome;
 				if($url){ $save->anexo = $url;}
 $save->placa = $request->placa;
+$save->cidade = $request->cidade;
 $save->modelo = $request->modelo;
 $save->ano = $request->ano;
 $save->cor = $request->cor;

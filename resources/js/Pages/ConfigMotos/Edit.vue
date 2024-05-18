@@ -46,8 +46,31 @@
 
         <div>
           <span class="p-float-label">
+            <InputText v-model="form.valor_compra" id="valor_compra" type="text" class="w-full" required maxlength="50" />
+            <label for="valor_compra" class="text-sm">Valor da compra</label>
+          </span>
+        </div>
+
+        
+        <div>
+          <span class="p-float-label">
             <Textarea v-model="form.observacoes" id="observacoes" type="text" class="w-full" required :autoResize="true" rows="3" cols="60"/>
             <label for="observacoes" class="text-sm">Observações</label>
+          </span>
+        </div>
+
+        <div>
+          <span class="p-float-label">
+            <Dropdown
+              class="w-full"
+              v-model="form.cidade"
+              :options="Cidades"
+              optionLabel="name"
+              dataKey="value"
+              required
+              :filter="true"
+            />
+            <label for="cidade" class="text-sm">Cidade</label>
           </span>
         </div>
      
@@ -58,6 +81,13 @@
             <label for="status" class="text-sm">Status</label>
           </span>
         </div>
+        <div class='file-input border w-full p-1 text-sm lg:col-span-1'>
+                  <input @change="attachAvatar" type='file'>
+                  <span class='button text-gray-400'>Anexo</span>
+                  <label class='label' data-js-label>{{ form.anexo?.name || 'Nenhum Arquivo selecionado'}}</label>
+        </div>
+        <span v-if="form.anexo?.name" class="inline-flex rounded-full bg-primary text-center px-4 text-xs font-semibold leading-5 text-white w-40"> Arquivo Anexado</span>
+        <img :src="route('download.files', {path: props.ConfigMotos?.anexo})" onerror="javascript: this.src = '/images/profile_default.png'" alt="" style="width: 150px" />
 
       </div>
       <div class="flex space-x-5 mt-8">
@@ -99,7 +129,8 @@ import { useToast } from "vue-toastification";
 
 const props = defineProps({
   errorBags: Object,
-
+  Cidades: Object,
+  ConfigMotos: Object,
 });
 
 const toast = useToast();
@@ -116,7 +147,9 @@ const statusOption = [
 
 const submited = ref(false);
 
-
+const Cidades = $propsPage?.value?.Cidades?.map((val) => {
+  return { name: val.nome, value: val.id };
+});
 
 const form = useForm({
   token: $propsPage?.value.ConfigMotos?.token,
@@ -124,10 +157,16 @@ const form = useForm({
   nome: $propsPage?.value.ConfigMotos?.nome,
 
   marca: $propsPage?.value.ConfigMotos?.marca,
+
+  anexo: $propsPage?.value.ConfigMotos?.anexo,
+
+  cidade: { value: $propsPage?.value.ConfigMotos?.cidade },
   
   cor: $propsPage?.value.ConfigMotos?.cor,
 
   nome_dono: $propsPage?.value.ConfigMotos?.nome_dono,
+
+  valor_compra: $propsPage?.value.ConfigMotos?.valor_compra,
 
   observacoes: $propsPage?.value.ConfigMotos?.observacoes,
 
@@ -191,8 +230,8 @@ function submit() {
 }
 
 function attachAvatar(e) {
-  form.anexo = e.target.files[0];
-}
+	form.anexo = e.target.files[0];
+  }
 </script>
 
 <style scoped>

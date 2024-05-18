@@ -1313,14 +1313,14 @@ select {
 .w-96 {
   width: 24rem;
 }
+.w-4\/5 {
+  width: 80%;
+}
 .w-\[24rem\] {
   width: 24rem;
 }
 .w-64 {
   width: 16rem;
-}
-.w-4\/5 {
-  width: 80%;
 }
 .w-40 {
   width: 10rem;

@@ -16,7 +16,7 @@
         <div class="space-y-5 mb-12 md:mb-60 w-full">    
           <div class="w-4/5 md:w-2/3 mx-auto">    
             <span class="p-float-label">
-              <InputText type="text" v-model="form.email" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required/>
+              <InputText type="email" v-model="form.email" autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" required/>
               <label>E-mail *</label>
             </span>
             <br>
@@ -28,6 +28,11 @@
             </div>
           </div>
           <!-- esqueceu a senha-->
+          <div class="text-center">
+            <a :href="route('cadastro')"
+              class="text-primary uppercase font-extrabold text-[12px] block">Cadastrar conta</a>
+          </div>
+
           <div class="text-center">
             <a :href="route('forgot.password')"
               class="text-primary uppercase font-extrabold text-[12px] block">ESQUECEU SUA SENHA?</a>

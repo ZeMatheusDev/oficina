@@ -58,10 +58,13 @@ CREATE TABLE `config_motos` (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255),
     marca VARCHAR(255),
+	cidade int(11) DEFAULT NULL ,
     cor VARCHAR(255),
     nome_dono VARCHAR(255),
+  	valor_compra varchar(50) DEFAULT NULL,
     status VARCHAR(255),
     token VARCHAR(255),
+  	anexo text DEFAULT NULL,
     observacoes TEXT,
     deleted INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -486,7 +489,7 @@ INSERT IGNORE INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUE
 	(12, 'App\\Models\\User', 52),
 	(12, 'App\\Models\\User', 53),
 	(12, 'App\\Models\\User', 55),
-	(13, 'App\\Models\\User', 56);
+	(13, 'App\\Models\\User', 56),
 /*!40000 ALTER TABLE `model_has_roles` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela projeto_estagio.permissions
@@ -577,7 +580,10 @@ CREATE TABLE IF NOT EXISTS `roles` (
 -- Copiando dados para a tabela projeto_estagio.roles: ~2 rows (aproximadamente)
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
 INSERT IGNORE INTO `roles` (`id`, `name`, `guard_name`, `status`, `created_at`, `updated_at`) VALUES
-	(6, 'Administrador', 'web', 'true', '2022-05-08 01:27:55', '2022-05-09 22:48:50');
+	(6, 'Administrador', 'web', 'true', '2022-05-08 01:27:55', '2022-05-09 22:48:50'),
+	(7, 'Funcionario', 'web', 'true', NOW(), NOW()),
+	(8, 'Cliente', 'web', 'true', NOW(), NOW());
+
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela projeto_estagio.role_has_permissions
@@ -616,8 +622,23 @@ INSERT IGNORE INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 	(351, 6),
 	(352, 6),
 	(353, 6),
-	(354, 6);
-
+	(354, 6),
+	(1,7), 
+	(2,7), 
+	(3,7), 
+	(4,7), 
+	(5,7),  
+	(344,7), 
+	(345,7), 
+	(346,7), 
+	(347,7), 
+	(348,7), 
+	(349,7), 
+	(350,7),
+	(351,7), 
+	(352,7), 
+	(353,7), 
+	(354,7);
 	
 
 /*!40000 ALTER TABLE `role_has_permissions` ENABLE KEYS */;
