@@ -91,6 +91,19 @@
         <div>
           <span class="p-float-label">
             <InputText
+              v-model="form.valor_diaria"
+              id="valor_diaria"
+              type="text"
+              class="w-full"
+              required
+              maxlength="50"
+            />
+            <label for="valor_diaria" class="text-sm">Valor da diaria</label>
+          </span>
+        </div>
+        <div>
+          <span class="p-float-label">
+            <InputText
               v-model="form.valor_compra"
               id="valor_compra"
               type="text"
@@ -127,20 +140,7 @@
             <label for="status" class="text-sm">Status</label>
           </span>
         </div>
-        <div>
-          <span class="p-float-label">
-            <Dropdown
-              class="w-full"
-              v-model="form.cidade"
-              :options="Cidades"
-              optionLabel="name"
-              dataKey="value"
-              required
-              :filter="true"
-            />
-            <label for="cidade" class="text-sm">Cidade</label>
-          </span>
-        </div>
+
         <div class='file-input border w-full p-1 text-sm lg:col-span-1'>
                   <input @change="attachAvatar" type='file'>
                   <span class='button text-gray-400'>Anexo</span>
@@ -148,7 +148,9 @@
         </div>
 <span v-if="form.anexo?.name" class="inline-flex rounded-full bg-primary text-center px-4 text-xs font-semibold leading-5 text-white w-40"> Arquivo Anexado</span>
 
+<div v-if="form.anexo && props.ConfigCarros?.anexo"> 
         <img :src="route('download.files', {path: props.ConfigCarros?.anexo})" onerror="javascript: this.src = '/images/profile_default.png'" alt="" style="width: 150px" />
+</div>
 
       </div>
       <div class="flex space-x-5 mt-8">
@@ -203,7 +205,6 @@ import { useToast } from "vue-toastification";
 
 const props = defineProps({
   errorBags: Object,
-  Cidades: Object,
   ConfigCarros: Object,
 });
 
@@ -220,10 +221,6 @@ const statusOption = [
 
 const submited = ref(false);
 
-const Cidades = $propsPage?.value?.Cidades?.map((val) => {
-  return { name: val.nome, value: val.id };
-});
-
 const form = useForm({
   token: $propsPage?.value.ConfigCarros?.token,
 
@@ -239,11 +236,11 @@ const form = useForm({
 
   cor: $propsPage?.value.ConfigCarros?.cor,
 
+  valor_diaria: $propsPage?.value.ConfigCarros?.valor_diaria,
+
   valor_compra: $propsPage?.value.ConfigCarros?.valor_compra,
 
   observacao: $propsPage?.value.ConfigCarros?.observacao,
-
-  cidade: { value: $propsPage?.value.ConfigCarros?.cidade },
 
   status: { value: $propsPage?.value.ConfigCarros?.status },
 

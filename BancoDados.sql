@@ -55,31 +55,79 @@ INSERT IGNORE INTO `companies` (`id`, `name`, `nome_fantasia`, `logo_path`, `cnp
 
 -- Copiando estrutura para tabela projeto_estagio.config_carros
 CREATE TABLE `config_motos` (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(255),
-    marca VARCHAR(255),
-	cidade int(11) DEFAULT NULL ,
-    cor VARCHAR(255),
-    nome_dono VARCHAR(255),
-  	valor_compra varchar(50) DEFAULT NULL,
-    status VARCHAR(255),
-    token VARCHAR(255),
-  	anexo text DEFAULT NULL,
-    observacoes TEXT,
-    deleted INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `nome` VARCHAR(255),
+    `marca` VARCHAR(255),
+    `empresa_id` INT UNSIGNED,
+    `cor` VARCHAR(255),
+    `alugado` TINYINT DEFAULT 0,
+    `vendido` TINYINT DEFAULT 0,
+    `valor_diaria` VARCHAR(50) DEFAULT NULL,
+    `valor_compra` VARCHAR(50) DEFAULT NULL,
+    `status` VARCHAR(255),
+    `token` VARCHAR(255),
+    `anexo` TEXT DEFAULT NULL,
+    `observacoes` TEXT,
+    `deleted` INT DEFAULT 0,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `aluguel_motos` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `moto_id` INT UNSIGNED,
+    `user_id` INT UNSIGNED,
+    `inicio_aluguel` VARCHAR(50),
+    `fim_aluguel` VARCHAR(50),
+    `valor_total` VARCHAR(50),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `aluguel_carros` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `carro_id` INT UNSIGNED,
+    `user_id` INT UNSIGNED,
+    `inicio_aluguel` VARCHAR(50),
+    `fim_aluguel` VARCHAR(50),
+    `valor_total` VARCHAR(50),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `historico_aluguel_motos` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `moto_id` INT UNSIGNED,
+    `user_id` INT UNSIGNED,
+    `inicio_aluguel` VARCHAR(50),
+    `fim_aluguel` VARCHAR(50),
+    `valor_total` VARCHAR(50),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `historico_aluguel_carros` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `carro_id` INT UNSIGNED,
+    `user_id` INT UNSIGNED,
+    `inicio_aluguel` VARCHAR(50),
+    `fim_aluguel` VARCHAR(50),
+    `valor_total` VARCHAR(50),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS `config_carros` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(500) DEFAULT NULL,
-  `cidade` int(11) DEFAULT NULL ,
   `placa` varchar(50) DEFAULT NULL,
   `modelo` varchar(50) DEFAULT NULL,
   `ano` varchar(50) DEFAULT NULL,
   `cor` varchar(50) DEFAULT NULL,
-  `valor_compra` varchar(50) DEFAULT NULL,
+  `alugado` TINYINT DEFAULT 0,
+  `vendido` TINYINT DEFAULT 0,
+  `valor_diaria` VARCHAR(50) DEFAULT NULL,
+  `valor_compra` VARCHAR(50) DEFAULT NULL,
   `anexo` text DEFAULT NULL,
   `observacao` text DEFAULT NULL,
   `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '0',
@@ -542,7 +590,11 @@ INSERT IGNORE INTO `permissions` (`id`, `name`, `guard_name`, `ordem`, `created_
 	(351, 'edit.ConfigMotos', 'web', 7, NULL, NULL),
 	(352, 'duplicate.ConfigMotos', 'web', 7, NULL, NULL),
 	(353, 'delete.ConfigMotos', 'web', 7, NULL, NULL),
-	(354, 'list.DashboardCalendario', 'web', 8, NULL, NULL);
+	(354, 'list.DashboardCalendario', 'web', 8, NULL, NULL),
+	(355, 'alugando', 'web', 9, NULL, NULL),
+	(356, 'telaAluguel', 'web', 9, NULL, NULL),
+	(357, 'list.aluguelMotos', 'web', 9, NULL, NULL),
+	(358, 'store.Alugado', 'web', 9, NULL, NULL);
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela projeto_estagio.personal_access_tokens
@@ -623,7 +675,11 @@ INSERT IGNORE INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 	(352, 6),
 	(353, 6),
 	(354, 6),
-	(1,7), 
+	(355,6),
+	(356,6),
+	(357,6),
+	(358,6),
+	(1,7),
 	(2,7), 
 	(3,7), 
 	(4,7), 
@@ -638,7 +694,16 @@ INSERT IGNORE INTO `role_has_permissions` (`permission_id`, `role_id`) VALUES
 	(351,7), 
 	(352,7), 
 	(353,7), 
-	(354,7);
+	(354,7),
+	(355,7),
+	(356,7),
+	(357,7),
+	(358,7),
+	(355,8),
+	(356,8),
+	(357,8),
+	(358,8);
+
 	
 
 /*!40000 ALTER TABLE `role_has_permissions` ENABLE KEYS */;

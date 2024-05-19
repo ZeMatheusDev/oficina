@@ -9,10 +9,13 @@
       <div class="fixed inset-0 md:static md:w-1/3 bg-white p-4 md:p-8 rounded-lg shadow-md flex flex-col items-center justify-center" style=" height: 163.5vh; width: 1200px; position: fixed; top: 0; left: 0;   overflow: hidden;">
         <!-- logo -->
         <div class=" mb-8 md:mb-20 w-full flex justify-center">
-          <img draggable="false" style="width: 300px; height: 300px; margin-top: -450px;" src="/images/logo_menu.png" class="w-1/2 md:w-60" alt="">
+          <img draggable="false" style="width: 300px; height: 300px; margin-top: -400px;" src="/images/logo_menu.png" class="w-1/2 md:w-60" alt="">
         </div>
         <!--inputs-->
-        <div class="btn btn-danger">Preencha todos os campos</div>
+
+        <div v-if="erro" class="alert alert-danger">
+          {{ erro }}
+        </div>
         <div class="space-y-5 mb-12 md:mb-60 w-full">    
           <div class="space-y-5 mb-12 md:mb-60 w-full">    
           <div class="w-4/5 md:w-2/3 mx-auto">    
@@ -98,11 +101,16 @@ const toast = useToast();
 const sending = ref(false);
 const error = ref(false);
 
+const props = defineProps({
+  erro: String,
+});
+
 const form = useForm({
   email: "",
   password: "",
   nome: "",
   numero: "",
+  erro: "",
 });
 
 
@@ -124,7 +132,7 @@ function submit() {
   if(form.email && form.password && form.nome && form.numero){
 
 form.post(route("cadastrar"), {
-  onSuccess: () => (window.location.href = "/login"),
+  onSuccess: () => (sending.value = true),
   onFinish: () => (sending.value = false),
 });
 } else {

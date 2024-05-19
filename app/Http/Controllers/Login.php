@@ -68,27 +68,36 @@ class Login extends Controller
     }
 
     public function cadastrar(Request $request){
+        $verificacaoDeCadastro = DB::table('users')->where('email', $request->email)->first();
         // como ja coloquei a verificação pelo front vue impedindo o envio dos inputs com varios characteres, nao irei fazer validate
-        $user = new User();
-        $user->empresa = 1;
-        $user->name = $request->nome;
-        $user->email = $request->email;
-        $user->profile_picture = '';
-        $user->status = 1;
-        $user->is_master = 0;
-        $user->phone = $request->numero;
-        $user->password =  Hash::make($request->password);
-        $user->created_at =  now();
-        $user->updated_at =  now();
-        $user->temp_password =  0;
-        $user->save();
-        $pegandoUsuario = DB::table('users')->where('email', $request->email)->first();
-        $model = new ModelHasRoles();
-        $model->role_id = 8;
-        $model->model_type = 'App\\Models\\User';
-        $model->model_id = $pegandoUsuario->id;
-        $model->save();
-        return redirect()->route('login');
+        if(isset($verificacaoDeCadastro) == false){
+            $user = new User();
+            $user->empresa = 1;
+            $user->name = $request->nome;
+            $user->email = $request->email;
+            $user->profile_picture = '';
+            $user->status = 1;
+            $user->is_master = 0;
+            $user->phone = $request->numero;
+            $user->password =  Hash::make($request->password);
+            $user->created_at =  now();
+            $user->updated_at =  now();
+            $user->temp_password =  0;
+            $user->save();
+            $pegandoUsuario = DB::table('users')->where('email', $request->email)->first();
+            $model = new ModelHasRoles();
+            $model->role_id = 8;
+            $model->model_type = 'App\\Models\\User';
+            $model->model_id = $pegandoUsuario->id;
+            $model->save();
+            return redirect()->route('login');
+        }
+        else{
+            return Inertia::render('Auth/Cadastro', [
+                'erro' => 'Esse email já está cadastrado'
+            ]);
+        }
+
     }
 
     public function setSessionData()

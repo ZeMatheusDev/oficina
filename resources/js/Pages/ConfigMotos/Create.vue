@@ -39,8 +39,8 @@
 
         <div>
           <span class="p-float-label">
-            <InputText v-model="form.nome_dono" id="nome_dono" type="text" class="w-full" required maxlength="50" />
-            <label for="nome_dono" class="text-sm">Nome do dono</label>
+            <InputText v-model="form.valor_diaria" id="valor_diaria" type="text" class="w-full" required maxlength="50" />
+            <label for="valor_diaria" class="text-sm">Valor da diaria para aluguel</label>
           </span>
         </div>
 
@@ -48,21 +48,6 @@
           <span class="p-float-label">
             <InputText v-model="form.valor_compra" id="valor_compra" type="text" class="w-full" required maxlength="50" />
             <label for="valor_compra" class="text-sm">Valor da compra</label>
-          </span>
-        </div>
-
-        <div>
-          <span class="p-float-label">
-            <Dropdown
-              class="w-full"
-              v-model="form.cidade"
-              :options="Cidades"
-              optionLabel="name"
-              dataKey="value"
-              required
-              :filter="true"
-            />
-            <label for="status" class="text-sm">Cidade</label>
           </span>
         </div>
 
@@ -128,7 +113,6 @@ import { useToast } from "vue-toastification";
 
 const props = defineProps({
   errorBags: Object,
-  Cidades: Object,
 
 });
 
@@ -145,9 +129,6 @@ const statusOption = [
   { name: "Inativo", value: '1' },
 ];
 
-const Cidades = $propsPage?.value?.Cidades?.map((val) => {
-  return { name: val.nome, value: val.id };
-});
 
 const today = new Date();
 
@@ -158,9 +139,8 @@ const form = useForm({
   nome: "",
   marca: "",
   cor: "",
-  cidade: "",
+  valor_diaria: "",
   anexo: "",
-  nome_dono: "",
   valor_compra: "",
   observacoes: "",
   status: "",
@@ -177,8 +157,6 @@ function validateForm() {
       );
     }
   }
-
-
 }
 function getFormFiltered() {
   const newForm = {};

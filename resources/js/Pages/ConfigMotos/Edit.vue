@@ -39,8 +39,8 @@
 
         <div>
           <span class="p-float-label">
-            <InputText v-model="form.nome_dono" id="nome_dono" type="text" class="w-full" required maxlength="50" />
-            <label for="nome_dono" class="text-sm">Nome do dono</label>
+            <InputText v-model="form.valor_diaria" id="valor_diaria" type="text" class="w-full" required maxlength="50" />
+            <label for="valor_diaria" class="text-sm">Valor da diaria</label>
           </span>
         </div>
 
@@ -58,21 +58,6 @@
             <label for="observacoes" class="text-sm">Observações</label>
           </span>
         </div>
-
-        <div>
-          <span class="p-float-label">
-            <Dropdown
-              class="w-full"
-              v-model="form.cidade"
-              :options="Cidades"
-              optionLabel="name"
-              dataKey="value"
-              required
-              :filter="true"
-            />
-            <label for="cidade" class="text-sm">Cidade</label>
-          </span>
-        </div>
      
         <div>
           <span class="p-float-label">
@@ -86,9 +71,12 @@
                   <span class='button text-gray-400'>Anexo</span>
                   <label class='label' data-js-label>{{ form.anexo?.name || 'Nenhum Arquivo selecionado'}}</label>
         </div>
-        <span v-if="form.anexo?.name" class="inline-flex rounded-full bg-primary text-center px-4 text-xs font-semibold leading-5 text-white w-40"> Arquivo Anexado</span>
-        <img :src="route('download.files', {path: props.ConfigMotos?.anexo})" onerror="javascript: this.src = '/images/profile_default.png'" alt="" style="width: 150px" />
+ 
 
+        <span v-if="form.anexo?.name" class="inline-flex rounded-full bg-primary text-center px-4 text-xs font-semibold leading-5 text-white w-40"> Arquivo Anexado</span>
+        <div v-if="form.anexo && props.ConfigMotos?.anexo"> 
+          <img :src="route('download.files', {path: props.ConfigMotos?.anexo})" onerror="javascript: this.src = '/images/profile_default.png'" alt="" style="width: 150px" />
+        </div>
       </div>
       <div class="flex space-x-5 mt-8">
         <button type="submit" :disabled="sending"
@@ -129,7 +117,6 @@ import { useToast } from "vue-toastification";
 
 const props = defineProps({
   errorBags: Object,
-  Cidades: Object,
   ConfigMotos: Object,
 });
 
@@ -147,10 +134,6 @@ const statusOption = [
 
 const submited = ref(false);
 
-const Cidades = $propsPage?.value?.Cidades?.map((val) => {
-  return { name: val.nome, value: val.id };
-});
-
 const form = useForm({
   token: $propsPage?.value.ConfigMotos?.token,
 
@@ -159,12 +142,10 @@ const form = useForm({
   marca: $propsPage?.value.ConfigMotos?.marca,
 
   anexo: $propsPage?.value.ConfigMotos?.anexo,
-
-  cidade: { value: $propsPage?.value.ConfigMotos?.cidade },
   
   cor: $propsPage?.value.ConfigMotos?.cor,
 
-  nome_dono: $propsPage?.value.ConfigMotos?.nome_dono,
+  valor_diaria: $propsPage?.value.ConfigMotos?.valor_diaria,  
 
   valor_compra: $propsPage?.value.ConfigMotos?.valor_compra,
 

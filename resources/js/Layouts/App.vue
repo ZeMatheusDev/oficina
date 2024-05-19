@@ -71,7 +71,7 @@
           <span v-show="!toggleTextMenu">Dashboard</span>
         </li>
       </Link>
-        <div class="uppercase mt-9 mb-4 text-[10px] font-bold tracking-widest text-gray-400/90">
+        <div class="uppercase mt-9 mb-4 text-[10px] font-bold tracking-widest text-gray-400/90" v-if="$page.props.userPermissions.includes('list.ConfigCarros')">
           <span v-show="!toggleTextMenu">
            Gestão de Cadastros
           </span>
@@ -237,7 +237,32 @@
                         
             </ul>
           </SlideUpDown>
+          
         </li>
+        <div class="uppercase mt-9 mb-4 text-[10px] font-bold tracking-widest text-gray-400/90">
+          <span v-show="!toggleTextMenu">
+            Aluguel
+          </span>
+        </div>
+        <a as="button" href="/aluguelMotos">
+        <li class="flex text-gray-500/80 font-semibold space-x-3 items-center text-[14px] mt-2 hover:text-proconph">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+          </svg>
+
+          <span v-show="!toggleTextMenu">Alugar Moto &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </li>
+        </a>
+        <a as="button" href="/aluguelCarros">
+        <li class="flex text-gray-500/80 font-semibold space-x-3 items-center text-[14px] mt-2 hover:text-proconph">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+          </svg>
+
+          <span v-show="!toggleTextMenu">Alugar Carro &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </li>
+        </a>
+        <br><br><br>
         <li class=" mt-4">
           <Link class="flex text-gray-500/80 font-semibold space-x-3 items-center text-[14px] hover:text-red-400" href="/logout" method="post">
           <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="currentColor">

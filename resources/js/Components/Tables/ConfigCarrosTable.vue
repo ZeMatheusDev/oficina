@@ -203,6 +203,12 @@
             </span>
           </div>
           <div>
+						<span class="p-float-label">
+							<InputText v-model="form2.valor_diaria" id="valor_diaria" type="text" class="w-full" required />
+							<label for="valor_diaria" class="text-sm">Valor da diaria</label>
+						</span>
+					</div>
+          <div>
             <span class="p-float-label">
               <InputText
                 v-model="form2.modelo"
@@ -260,6 +266,18 @@
                 required
               />
               <label for="observacao" class="text-sm">Observação</label>
+            </span>
+          </div>
+          <div>
+            <span class="p-float-label">
+              <InputText
+                v-model="form2.alugado"
+                id="alugado"
+                type="text"
+                class="w-full"
+                required
+              />
+              <label for="alugado" class="text-sm">Alugado?</label>
             </span>
           </div>
           <div>
@@ -349,6 +367,14 @@
             <Checkbox
               @change="toggleColumns"
               :binary="true"
+              v-model="formColumns['columns']['valor_diaria']"
+            />
+            <span>Valor da diaria</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <Checkbox
+              @change="toggleColumns"
+              :binary="true"
               v-model="formColumns['columns']['modelo']"
             />
             <span>Modelo</span>
@@ -369,6 +395,7 @@
             />
             <span>Cor</span>
           </div>
+          
           <div class="flex items-center space-x-2">
             <Checkbox
               @change="toggleColumns"
@@ -384,6 +411,14 @@
               v-model="formColumns['columns']['observacao']"
             />
             <span>Observação</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <Checkbox
+              @change="toggleColumns"
+              :binary="true"
+              v-model="formColumns['columns']['alugado']"
+            />
+            <span>Alugado?</span>
           </div>
           <div class="flex items-center space-x-2">
             <Checkbox
@@ -485,6 +520,37 @@
                 >
                   <div class="flex">
                     <span class="group-hover:text-indigo-800">Placa</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                      />
+                    </svg>
+                  </div>
+                </th>
+                <th
+                  v-if="formColumns.columns.valor_diaria"
+                  scope="col"
+                  class="px-4 text-sm cursor-pointer text-center border-r group"
+                  @click="
+                    orderBy = {
+                      column: 'valor_diaria',
+                      sorting: sortTable(sortVal.valor_diaria)
+                        ? (sortVal.valor_diaria = 1)
+                        : (sortVal.valor_diaria = 0),
+                    }
+                  "
+                >
+                  <div class="flex">
+                    <span class="group-hover:text-indigo-800">Valor da diaria</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-5 w-5 ml-auto group-hover:text-indigo-800"
@@ -657,6 +723,37 @@
                   </div>
                 </th>
                 <th
+                  v-if="formColumns.columns.alugado"
+                  scope="col"
+                  class="px-4 text-sm cursor-pointer text-center border-r group"
+                  @click="
+                    orderBy = {
+                      column: 'alugado',
+                      sorting: sortTable(sortVal.alugado)
+                        ? (sortVal.alugado = 1)
+                        : (sortVal.alugado = 0),
+                    }
+                  "
+                >
+                  <div class="flex">
+                    <span class="group-hover:text-indigo-800">Alugado?</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                      />
+                    </svg>
+                  </div>
+                </th>
+                <th
                   v-if="formColumns.columns.status"
                   scope="col"
                   class="px-4 text-sm cursor-pointer text-center border-r group"
@@ -775,6 +872,16 @@
                   </div>
                 </td>
                 <td
+                  v-if="formColumns?.columns?.valor_diaria"
+                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+                >
+                  <div class="flex items-center">
+                    <div>
+                      <div class="font-medium text-gray-900">{{ data?.valor_diaria }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td
                   v-if="formColumns?.columns?.modelo"
                   class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
                 >
@@ -823,6 +930,17 @@
                   <div class="flex items-center">
                     <div>
                       <div class="font-medium text-gray-900">{{ data?.observacao }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td
+                  v-if="formColumns?.columns?.alugado"
+                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+                >
+                  <div class="flex items-center">
+                    <div>
+                      <div class="font-medium text-gray-900" v-if="data?.alugado == 0">Não</div>
+											<div class="font-medium text-gray-900" v-if="data?.alugado == 1">Sim</div>
                     </div>
                   </div>
                 </td>
@@ -945,11 +1063,13 @@ const statusOption = [
 const sortVal = {
   nome: 1,
   placa: 1,
+  valor_diaria: 1,
   modelo: 1,
   ano: 1,
   cor: 1,
   valor_compra: 1,
   observacao: 1,
+  alugado: 1,
   status: 1,
   created_at: 1,
 };
@@ -959,11 +1079,13 @@ const formColumns = useForm({
   columns: {
     nome: validateColumnsVisibility("nome"),
     placa: validateColumnsVisibility("placa"),
+    valor_diaria: validateColumnsVisibility("valor_diaria"),
     modelo: validateColumnsVisibility("modelo"),
     ano: validateColumnsVisibility("ano"),
     cor: validateColumnsVisibility("cor"),
     valor_compra: validateColumnsVisibility("valor_compra"),
     observacao: validateColumnsVisibility("observacao"),
+    alugado: validateColumnsVisibility("alugado"),
     status: validateColumnsVisibility("status"),
     created_at: validateColumnsVisibility("created_at"),
   },
@@ -972,11 +1094,13 @@ const formColumns = useForm({
 const form2 = useForm({
   nome: props.Filtros?.nome || null,
   placa: props.Filtros?.placa || null,
+  valor_diaria: props.Filtros?.valor_diaria || null,
   modelo: props.Filtros?.modelo || null,
   ano: props.Filtros?.ano || null,
   cor: props.Filtros?.cor || null,
   valor_compra: props.Filtros?.valor_compra || null,
   observacao: props.Filtros?.observacao || null,
+  alugado: props.Filtros?.alugado || null,
   status: props.Filtros?.status || null,
   created_at: props.Filtros?.created_at || null,
   limparFiltros: "",

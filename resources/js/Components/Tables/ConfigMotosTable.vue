@@ -126,19 +126,25 @@
 							<label for="cor" class="text-sm">Cor</label>
 						</span>
 					</div>
-
-					<div>
-						<span class="p-float-label">
-							<InputText v-model="form2.nome_dono" id="nome_dono" type="text" class="w-full" required />
-							<label for="nome_dono" class="text-sm">Nome do dono</label>
-						</span>
-					</div>
-
 					
 					<div>
 						<span class="p-float-label">
 							<InputText v-model="form2.valor_compra" id="valor_compra" type="text" class="w-full" required />
 							<label for="valor_compra" class="text-sm">Valor da compra</label>
+						</span>
+					</div>
+
+					<div>
+						<span class="p-float-label">
+							<InputText v-model="form2.valor_diaria" id="valor_diaria" type="text" class="w-full" required />
+							<label for="valor_diaria" class="text-sm">Valor da diaria</label>
+						</span>
+					</div>
+
+					<div>
+						<span class="p-float-label">
+							<InputText v-model="form2.alugado" id="alugado" type="text" class="w-full" required />
+							<label for="alugado" class="text-sm">Alugado?</label>
 						</span>
 					</div>
 
@@ -211,11 +217,6 @@
 					<div class="flex items-center space-x-2">
 						<Checkbox @change="toggleColumns" :binary="true" v-model="formColumns['columns']['cor']" />
 						<span>Cor</span>
-					</div>
-
-					<div class="flex items-center space-x-2">
-						<Checkbox @change="toggleColumns" :binary="true" v-model="formColumns['columns']['nome_dono']" />
-						<span>Nome do dono</span>
 					</div>
 
 					<div class="flex items-center space-x-2">
@@ -298,14 +299,11 @@
 									</div>
 								</th>
 
-
-
-
-								<th v-if="formColumns.columns.nome_dono" scope="col"
+								<th v-if="formColumns.columns.valor_compra" scope="col"
 									class="px-4 text-sm cursor-pointer text-center border-r group"
-									@click="orderBy = { column: 'nome_dono', sorting: sortTable(sortVal.nome_dono) ? sortVal.nome_dono = 1 : sortVal.nome_dono = 0 }">
+									@click="orderBy = { column: 'valor_compra', sorting: sortTable(sortVal.valor_compra) ? sortVal.valor_compra = 1 : sortVal.valor_compra = 0 }">
 									<div class="flex">
-										<span class="group-hover:text-indigo-800">Nome do dono</span>
+										<span class="group-hover:text-indigo-800">Valor da compra</span>
 										<svg xmlns="http://www.w3.org/2000/svg"
 											class="h-5 w-5 ml-auto group-hover:text-indigo-800" fill="none"
 											viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -315,11 +313,25 @@
 									</div>
 								</th>
 
-								<th v-if="formColumns.columns.valor_compra" scope="col"
+								<th v-if="formColumns.columns.valor_diaria" scope="col"
 									class="px-4 text-sm cursor-pointer text-center border-r group"
-									@click="orderBy = { column: 'valor_compra', sorting: sortTable(sortVal.valor_compra) ? sortVal.valor_compra = 1 : sortVal.valor_compra = 0 }">
+									@click="orderBy = { column: 'valor_diaria', sorting: sortTable(sortVal.valor_diaria) ? sortVal.valor_diaria = 1 : sortVal.valor_diaria = 0 }">
 									<div class="flex">
-										<span class="group-hover:text-indigo-800">Valor da compra</span>
+										<span class="group-hover:text-indigo-800">Valor da diaria</span>
+										<svg xmlns="http://www.w3.org/2000/svg"
+											class="h-5 w-5 ml-auto group-hover:text-indigo-800" fill="none"
+											viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+											<path stroke-linecap="round" stroke-linejoin="round"
+												d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+										</svg>
+									</div>
+								</th>
+
+								<th v-if="formColumns.columns.alugado" scope="col"
+									class="px-4 text-sm cursor-pointer text-center border-r group"
+									@click="orderBy = { column: 'alugado', sorting: sortTable(sortVal.alugado) ? sortVal.alugado = 1 : sortVal.alugado = 0 }">
+									<div class="flex">
+										<span class="group-hover:text-indigo-800">Alugado?</span>
 										<svg xmlns="http://www.w3.org/2000/svg"
 											class="h-5 w-5 ml-auto group-hover:text-indigo-800" fill="none"
 											viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -415,15 +427,6 @@
 										</div>
 									</div>
 								</td>
-
-								<td v-if="formColumns?.columns?.nome_dono"
-									class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-									<div class="flex items-center">
-										<div>
-											<div class="font-medium text-gray-900">{{ data?.nome_dono }}</div>
-										</div>
-									</div>
-								</td>
 								
 								<td v-if="formColumns?.columns?.valor_compra"
 									class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
@@ -433,6 +436,27 @@
 										</div>
 									</div>
 								</td>
+
+								<td v-if="formColumns?.columns?.valor_diaria"
+									class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+									<div class="flex items-center">
+										<div>
+											<div class="font-medium text-gray-900">{{ data?.valor_diaria }}</div>
+										</div>
+									</div>
+								</td>
+
+								<td v-if="formColumns?.columns?.alugado"
+									class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+									<div class="flex items-center">
+										<div>
+											<div class="font-medium text-gray-900" v-if="data?.alugado == 0">Não</div>
+											<div class="font-medium text-gray-900" v-if="data?.alugado == 1">Sim</div>
+										</div>
+									</div>
+								</td>
+
+	
 
 								<td v-if="formColumns?.columns?.observacoes"
 									class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
@@ -553,7 +577,8 @@ const sortVal = {
 	marca: 1,
 	cor: 1,
 	valor_compra: 1,
-	nome_dono: 1,
+	valor_diaria: 1,
+	alugado: 1,
 	observacoes: 1,
 	status: 1,
 	created_at: 1,
@@ -566,8 +591,9 @@ const formColumns = useForm({
 		nome: validateColumnsVisibility("nome"),
 		marca: validateColumnsVisibility("marca"),
 		cor: validateColumnsVisibility("cor"),
-		nome_dono: validateColumnsVisibility("nome_dono"),
 		valor_compra: validateColumnsVisibility("valor_compra"),
+		valor_diaria: validateColumnsVisibility("valor_diaria"),
+		alugado: validateColumnsVisibility("alugado"),
 		observacoes: validateColumnsVisibility("observacoes"),
 		status: validateColumnsVisibility("status"),
 		created_at: validateColumnsVisibility("created_at"),
@@ -579,9 +605,9 @@ const form2 = useForm({
 	nome: props.Filtros?.nome || null,
 	marca: props.Filtros?.marca || null,
 	cor: props.Filtros?.cor || null,
-	nome_dono: props.Filtros?.nome_dono || null,
 	valor_compra: props.Filtros?.valor_compra || null,
-
+	valor_diaria: props.Filtros?.valor_diaria || null,
+	alugado: props.Filtros?.alugado || null,
 	observacoes: props.Filtros?.observacoes || null,
 	status: {value: props.Filtros?.status || null},
 	created_at: props.Filtros?.created_at || null,

@@ -153,12 +153,20 @@ Route::get('ConfigCarros', [ConfigCarros::class, 'index'])->name('list.ConfigCar
 	Route::post('ConfigCarros/deletarTodos', [ConfigCarros::class, 'deletarTodos'])->name('deletarTodos.ConfigCarros');
 	Route::post('ConfigCarros/RestaurarTodos', [ConfigCarros::class, 'RestaurarTodos'])->name('RestaurarTodos.ConfigCarros');
 	Route::get('ConfigCarros/RelatorioExcel', [ConfigCarros::class, 'exportarRelatorioExcel'])->name('get.Excel.ConfigCarros');
+    Route::post('AlugadoCarro', [ConfigCarros::class, 'alugado'])->name('store.AlugadoCarro');
+    Route::get('aluguelCarros', [ConfigCarros::class, 'aluguelCarros'])->name('list.aluguelCarros');
+    Route::get('telaAluguelCarros/{id}', [ConfigCarros::class, 'telaAluguel'])->name('telaAluguelCarros');
+    Route::post('alugandoCarro/{id}', [ConfigCarros::class, 'alugando'])->name('alugandoCarro');
 
     Route::get('ConfigMotos', [ConfigMotos::class, 'index'])->name('list.ConfigMotos');
 	Route::post('ConfigMotos', [ConfigMotos::class, 'index'])->name('listP.ConfigMotos');
     Route::get('ConfigMotos/criar', [ConfigMotos::class, 'create'])->name('form.store.ConfigMotos');
     Route::post('ConfigMotos/criar', [ConfigMotos::class, 'store'])->name('store.ConfigMotos');
     Route::get('ConfigMotos/editar/{id}', [ConfigMotos::class, 'edit'])->name('form.update.ConfigMotos');
+    Route::post('alugado', [ConfigMotos::class, 'alugado'])->name('store.Alugado');
+    Route::get('aluguelMotos', [ConfigMotos::class, 'aluguelMotos'])->name('list.aluguelMotos');
+    Route::get('telaAluguel/{id}', [ConfigMotos::class, 'telaAluguel'])->name('telaAluguel');
+    Route::post('alugando/{id}', [ConfigMotos::class, 'alugando'])->name('alugando');
     Route::post('ConfigMotos/editar/{id}', [ConfigMotos::class, 'update'])->name('update.ConfigMotos');
     Route::post('ConfigMotos/deletar/{id}', [ConfigMotos::class, 'delete'])->name('delete.ConfigMotos');
 	Route::post('ConfigMotos/deletarSelecionados/{id?}', [ConfigMotos::class, 'deleteSelected'])->name('deleteSelected.ConfigMotos');
@@ -170,7 +178,7 @@ Route::get('ConfigCarros', [ConfigCarros::class, 'index'])->name('list.ConfigCar
 
    
     Route::get('Dashboard/Calendario', [Dashboard::class, 'Calendario'])->name('list.DashboardCalendario');
-    Route::get('Dashboard/{id?}', [Dashboard::class, 'index'])->name('list.Dashboard');    
+    Route::get('Dashboard/{id?}', [Dashboard::class, 'index'])->name('list.Dashboard');
 
 
     Route::get('cep/{cep}', [Utils::class, 'getAddressViaCep'])->name('get.address.viacep');

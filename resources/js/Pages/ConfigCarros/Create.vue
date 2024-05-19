@@ -44,7 +44,7 @@
               type="text"
               class="w-full"
               required
-              maxlength="50"
+              maxlength="7"
             />
             <label for="placa" class="text-sm">Placa</label>
           </span>
@@ -90,6 +90,12 @@
         </div>
         <div>
           <span class="p-float-label">
+            <InputText v-model="form.valor_diaria" id="valor_diaria" type="text" class="w-full" required maxlength="50" />
+            <label for="valor_diaria" class="text-sm">Valor da diaria para aluguel</label>
+          </span>
+        </div>
+        <div>
+          <span class="p-float-label">
             <InputText
               v-model="form.valor_compra"
               id="valor_compra"
@@ -125,20 +131,6 @@
               required
             />
             <label for="status" class="text-sm">Status</label>
-          </span>
-        </div>
-        <div>
-          <span class="p-float-label">
-            <Dropdown
-              class="w-full"
-              v-model="form.cidade"
-              :options="Cidades"
-              optionLabel="name"
-              dataKey="value"
-              required
-              :filter="true"
-            />
-            <label for="status" class="text-sm">Cidade</label>
           </span>
         </div>
         <div class='file-input border w-full p-1 text-sm lg:col-span-1'>
@@ -202,7 +194,6 @@ import { useToast } from "vue-toastification";
 
 const props = defineProps({
   errorBags: Object,
-  Cidades: Object,
 });
 
 const toast = useToast();
@@ -220,14 +211,8 @@ const today = new Date();
 
 const submited = ref(false);
 
-const Cidades = $propsPage?.value?.Cidades?.map((val) => {
-  return { name: val.nome, value: val.id };
-});
-
 const form = useForm({
   nome: "",
-
-  cidade: "",
 
   anexo: "",
 
@@ -238,6 +223,8 @@ const form = useForm({
   ano: "",
 
   cor: "",
+
+  valor_diaria: "",
 
   valor_compra: "",
 
