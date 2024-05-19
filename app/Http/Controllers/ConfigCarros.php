@@ -28,12 +28,11 @@
 
 			$dataDeHoje = Carbon::now();
 
-			$dataFormatada = $dataDeHoje->format('d/m/Y');
-	
 			$carrosAlugados = DB::table('aluguel_carros')->get();
 	
 			foreach($carrosAlugados as $carro){
-				if($carro->fim_aluguel < $dataFormatada){
+				$fimAluguel = Carbon::createFromFormat('d/m/Y', $carro->fim_aluguel);
+				if($fimAluguel < $dataDeHoje){
 					$historico = new HistoricoAluguelCarro();
 					$historico->carro_id = $carro->carro_id;
 					$historico->user_id = $carro->user_id;
@@ -254,21 +253,15 @@ if(isset($data["ConfigCarros"]["created_at"])){
 		public function aluguelCarros(Request $request){
 			$Modulo = "ConfigCarros";
 			
-			$permUser = Auth::user()->hasPermissionTo("list.ConfigCarros");
-
-			if (!$permUser) {
-				return redirect()->route("list.Dashboard",["id"=>"1"]);
-			}
 
 			try{
 				$dataDeHoje = Carbon::now();
 
-				$dataFormatada = $dataDeHoje->format('d/m/Y');
-		
 				$carrosAlugados = DB::table('aluguel_carros')->get();
 		
 				foreach($carrosAlugados as $carro){
-					if($carro->fim_aluguel < $dataFormatada){
+					$fimAluguel = Carbon::createFromFormat('d/m/Y', $carro->fim_aluguel);
+					if($fimAluguel < $dataDeHoje){
 						$historico = new HistoricoAluguelCarro();
 						$historico->carro_id = $carro->carro_id;
 						$historico->user_id = $carro->user_id;

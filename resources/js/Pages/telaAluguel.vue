@@ -182,7 +182,7 @@ const multiplicador = () => {
 	submited.value = true;
 	const submitForm = getFormFiltered();
   
-	submitForm.post(route("store.AlugadoCarro"), {
+	submitForm.post(route("store.Alugado"), {
 	  preserveState: true,
 	  onError: (errors) => {
 		if (Array.isArray(errors)) {

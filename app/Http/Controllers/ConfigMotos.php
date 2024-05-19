@@ -33,13 +33,12 @@ class ConfigMotos extends Controller
 		try {
 
 			$dataDeHoje = Carbon::now();
-
-			$dataFormatada = $dataDeHoje->format('d/m/Y');
 	
 			$motosAlugadas = DB::table('aluguel_motos')->get();
-	
+			
 			foreach($motosAlugadas as $moto){
-				if($moto->fim_aluguel < $dataFormatada){
+				$fimAluguel = Carbon::createFromFormat('d/m/Y', $moto->fim_aluguel);
+				if($fimAluguel < $dataDeHoje){
 					$historico = new HistoricoAluguelMoto();
 					$historico->moto_id = $moto->moto_id;
 					$historico->user_id = $moto->user_id;
@@ -464,7 +463,7 @@ class ConfigMotos extends Controller
 		$usuario = DB::table('users')->where('id', Auth::user()->id)->first();
 		$usuario_id = $usuario->id;
 		$usuario_nome = $usuario->name;
-		return Inertia::render("telaAluguelCarros", [
+		return Inertia::render("telaAluguel", [
 			'hasRole' => $hasRole,
 			'usuario_id' => $usuario_id,
 			'usuario_nome' => $usuario_nome,
@@ -751,13 +750,12 @@ class ConfigMotos extends Controller
 		$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 
 		$dataDeHoje = Carbon::now();
-
-		$dataFormatada = $dataDeHoje->format('d/m/Y');
-
+	
 		$motosAlugadas = DB::table('aluguel_motos')->get();
-
+		
 		foreach($motosAlugadas as $moto){
-			if($moto->fim_aluguel < $dataFormatada){
+			$fimAluguel = Carbon::createFromFormat('d/m/Y', $moto->fim_aluguel);
+			if($fimAluguel < $dataDeHoje){
 				$historico = new HistoricoAluguelMoto();
 				$historico->moto_id = $moto->moto_id;
 				$historico->user_id = $moto->user_id;
@@ -769,7 +767,6 @@ class ConfigMotos extends Controller
 				AluguelMoto::where('id', $moto->id)->delete();
 			}
 		}
-		
 
 		try{
 			$verificarMotosNaoAlugadas = DB::table('config_motos')->where('alugado', 0)->get();
