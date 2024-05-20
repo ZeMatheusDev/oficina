@@ -17,8 +17,8 @@
   
       <div class="form-group" v-if="form.categoria == 8">
     <span class="p-float-label">
-      <InputText v-model="form.usuario_id" :value="form.nome" :readonly="verificarCondicao()" id="nome" type="text" class="w-full" required maxlength="50" />
-      <label for="nome" class="text-sm">Contratante:</label>
+      <InputText v-model="form.usuario_id" :value="form.usuario_nome" :readonly="verificarCondicao()" id="usuario_nome" type="text" class="w-full" required maxlength="50" />
+      <label for="usuario_nome" class="text-sm">Contratante:</label>
     </span>
   </div>
 
@@ -155,6 +155,7 @@ const multiplicador = () => {
   const form = useForm({
 	usuario_id: props.usuario_id,
 	nome: props.usuario_nome,
+	usuario_nome: '',
 	modelo: props.moto_modelo,
 	moto_id: props.moto_id,
 	valor_diaria: props.valor_diaria,

@@ -13,6 +13,8 @@ use App\Http\Controllers\SMTP;
 
 use App\Http\Controllers\ConfigCarros;
 use App\Http\Controllers\ConfigMotos;
+use App\Http\Controllers\Conserto;
+
 // ALTERAHEAD
 
 
@@ -140,6 +142,8 @@ Route::get('logsUsuario', [logs::class, 'index'])->name('list.logsUsuario');
     Route::get('SMTP/editar', [SMTP::class, 'edit'])->name('list.SMTP');
     Route::post('SMTP/editar/{id}', [SMTP::class, 'update'])->name('update.SMTP');
 
+    Route::get('conserto', [Conserto::class, 'index'])->name('conserto');
+    Route::post('consertar', [Conserto::class, 'consertar'])->name('consertar');
 
 
 Route::get('ConfigCarros', [ConfigCarros::class, 'index'])->name('list.ConfigCarros');
