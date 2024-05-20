@@ -23,34 +23,41 @@
   </div>
 
 		<div class="form-group" v-if="form.categoria != 8">
+            <label for="status" class="text-sm">Contratante:</label>
+
           <span class="p-float-label">
             <Dropdown class="w-full" v-model="form.usuario_id" :value="form.nome" :options="Users" optionLabel="name" dataKey="value"
               required />
-            <label for="status" class="text-sm">Contratante:</label>
           </span>
         </div>
 		
 		  <div>
+			<label for="modelo" class="text-sm">Modelo do carro</label>
+
 			<span class="p-float-label">
 			  <InputText v-model="form.modelo" readonly id="modelo" type="text" class="w-full" required maxlength="50" />
-			  <label for="modelo" class="text-sm">Modelo do carro</label>
 			</span>
 		  </div>
   
 		  <div>
+			<label for="modelo" class="text-sm">Quantidade de dias alugados</label>
+
 			<span class="p-float-label">
 				<input type="text" v-model="form.dias" @input="validateDias" maxlength="3" class="w-full" toggleMask autocomplete="off" style="font-family: Arial, Helvetica, sans-serif;" placeholder="Dias alugados" required>
 			</span>
 		  </div>
   
 		  <div>
+			<label for="inicio_aluguel" class="text-sm">Dia inicial do aluguel</label>
+
 			<span class="p-float-label">
 				<Calendar v-model="selectedDate" id="inicio_aluguel" :readonly-input="true" :min-date="minDate" :show-icon="true" :date-format="dateFormat" />
-			  <label for="inicio_aluguel" class="text-sm">Dia inicial do aluguel</label>
 			</span>
 		  </div>
 	   
 		  <div>
+			<label for="inicio_aluguel" class="text-sm">Valor total</label>
+
 			<span class="p-float-label">
 				<input type="text" readonly v-model="form.valor" class="w-full" toggleMask autocomplete="off" style="font-family:Georgia, 'Times New Roman', Times, serif; font-size: 18px;" placeholder="Valor total" required>
 			</span>
@@ -133,11 +140,11 @@ import Calendar from 'primevue/calendar';
   let value = form.dias.replace(/\D/g, '');
   form.dias = value;
   if(form.dias == 0){
-	form.valor = 0;
+	form.valor = 'R$'+0;
   }
   else{
 	let valorFinal = parseInt(value) * parseInt(form.valor_diaria);
-	form.valor = valorFinal;
+	form.valor = 'R$'+valorFinal;
   }
 
 	
@@ -161,7 +168,7 @@ const multiplicador = () => {
 	categoria: props.categoria,
 	valor_diaria: props.valor_diaria,
 	dias: "",
-	valor: "0",
+	valor: 'R$'+0,
 	inicio_aluguel: selectedDate,
   
   });

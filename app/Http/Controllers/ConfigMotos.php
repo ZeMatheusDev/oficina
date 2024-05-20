@@ -1168,8 +1168,8 @@ class ConfigMotos extends Controller
 
 	public function alugado(Request $request){
 		$moto_id = $request->moto_id;
+		$valorFormatado = explode('$', $request->valor);
 		$date = Carbon::parse($request->inicio_aluguel)->format('d/m/Y');
-		$valor = $request->valor;
 		$dataInicialParaSomar = Carbon::parse($request->inicio_aluguel);
 		$diasParaAdicionar = ((int)$request->dias);
 		$dataFinal = $dataInicialParaSomar->addDays($diasParaAdicionar);
@@ -1179,7 +1179,7 @@ class ConfigMotos extends Controller
 		$aluguel->user_id = $request->usuario_id;
 		$aluguel->inicio_aluguel = $date; 
 		$aluguel->fim_aluguel = $dataFinalFormatada; 
-		$aluguel->valor_total = $valor; 
+		$aluguel->valor_total = $valorFormatado[1]; 
 		$aluguel->created_at = now();
 		$aluguel->updated_at = now();
 		$aluguel->save();

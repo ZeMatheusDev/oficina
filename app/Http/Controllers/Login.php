@@ -59,7 +59,6 @@ class Login extends Controller
         if (Auth::attempt($credentials)) {
             return redirect()->route('home');
         }
-
         return redirect("login")->withErrors('As credenciais informadas estão inválidas!');
     }
 

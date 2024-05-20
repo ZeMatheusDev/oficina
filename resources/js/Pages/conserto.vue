@@ -36,7 +36,7 @@
           <span class="p-float-label">
 
 
-            <select v-model="form.tipoVeiculo" id="tipoVeiculo" required class="w-full">
+            <select v-model="form.tipoVeiculo" @change="zerarValor" id="tipoVeiculo" required class="w-full">
               <option value="carro">Carro</option>
               <option value="moto">Moto</option>
             </select>
@@ -70,7 +70,7 @@
         <div>
           <label for="">Placa:</label>
           <span class="p-float-label">
-            <InputText v-model="form.placa" id="placa" type="text" maxlength="7" class="w-full" required />
+            <InputText v-model="form.placa" id="placa" type="text" minlength="7" maxlength="7" class="w-full" required />
           </span>
         </div>
 
@@ -189,7 +189,7 @@ const submited = ref(false);
 
 const validateValor = () => {
   let value = form.valor.replace(/\D/g, '');
-  form.valor = value;
+  form.valor = 'R$'+value;
 
 	
 
@@ -223,8 +223,16 @@ const form = useForm({
   problemas_carros: props.problemas_carros,
 });
 
+function zerarValor(){
+  form.valor = 'R$'+0;
+  form.placa = '';
+  form.data_finalizacao = '';
+  form.problemaCarro_nome = '';
+  form.problemaCarro_id = '';
+}
+
 function updateValorCarro() {
-      form.valor = form.problemaCarro_id.valor_medio;
+      form.valor = 'R$'+form.problemaCarro_id.valor_medio;
       let timestamp = Date.now();
       let dataParaSomar = (parseInt(form.problemaCarro_id.dias_para_arrumar)+1);
       let umDiaEmMilissegundos = 24 * 60 * 60 * 1000;
@@ -235,10 +243,11 @@ function updateValorCarro() {
       let ano = novaData.getFullYear();
       let novaDataFormatada = `${dia}/${mes}/${ano}`;
       form.data_finalizacao = novaDataFormatada;
+
   }
 
   function updateValorMoto() {
-      form.valor = form.problemaMoto_id.valor_medio;
+      form.valor = 'R$'+form.problemaMoto_id.valor_medio;
       let timestamp = Date.now();
       let dataParaSomar = (parseInt(form.problemaMoto_id.dias_para_arrumar)+1);
       let umDiaEmMilissegundos = 24 * 60 * 60 * 1000;
@@ -249,6 +258,7 @@ function updateValorCarro() {
       let ano = novaData.getFullYear();
       let novaDataFormatada = `${dia}/${mes}/${ano}`;
       form.data_finalizacao = novaDataFormatada;
+      
   }
 
 function analiseRole(){

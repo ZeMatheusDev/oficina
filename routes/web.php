@@ -144,6 +144,9 @@ Route::get('logsUsuario', [logs::class, 'index'])->name('list.logsUsuario');
 
     Route::get('conserto', [Conserto::class, 'index'])->name('conserto');
     Route::post('consertar', [Conserto::class, 'consertar'])->name('consertar');
+    Route::get('meusConsertos', [Conserto::class, 'meusConsertos'])->name('meusConsertos');
+    Route::get('todosConsertos', [Conserto::class, 'todosConsertos'])->name('todosConsertos');
+    
 
 
 Route::get('ConfigCarros', [ConfigCarros::class, 'index'])->name('list.ConfigCarros');
@@ -165,6 +168,7 @@ Route::get('ConfigCarros', [ConfigCarros::class, 'index'])->name('list.ConfigCar
     Route::post('comprandoCarro/{id}', [ConfigCarros::class, 'comprandoCarro'])->name('comprandoCarro');
     Route::get('telaCompraCarro/{id}', [ConfigCarros::class, 'telaCompraCarro'])->name('telaCompraCarro');
     Route::post('compradoCarros', [ConfigCarros::class, 'compradoCarros'])->name('compradoCarros');
+    Route::get('meusAlugueis', [ConfigCarros::class, 'meusAlugueis'])->name('meusAlugueis');
     
     Route::get('ConfigMotos', [ConfigMotos::class, 'index'])->name('list.ConfigMotos');
 	Route::post('ConfigMotos', [ConfigMotos::class, 'index'])->name('listP.ConfigMotos');

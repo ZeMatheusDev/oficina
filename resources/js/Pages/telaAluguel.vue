@@ -15,42 +15,49 @@
   
 		<div class="mt-10 grid grid-cols-1 gap-6 max-md:grid-cols-1">
   
-      <div class="form-group" v-if="form.categoria == 8">
+			<div class="form-group" v-if="form.categoria == 8">
+				<label for="nome" class="text-sm">Contratante:</label>
+
     <span class="p-float-label">
-      <InputText v-model="form.usuario_id" :value="form.usuario_nome" :readonly="verificarCondicao()" id="usuario_nome" type="text" class="w-full" required maxlength="50" />
-      <label for="usuario_nome" class="text-sm">Contratante:</label>
+      <InputText v-model="form.usuario_id" :value="form.nome" :readonly="verificarCondicao()" id="nome" type="text" class="w-full" required maxlength="50" />
     </span>
   </div>
 
 		<div class="form-group" v-if="form.categoria != 8">
+			<label for="nome" class="text-sm">Contratante:</label>
+
           <span class="p-float-label">
             <Dropdown class="w-full" v-model="form.usuario_id" :value="form.nome" :options="Users" optionLabel="name" dataKey="value"
               required />
-            <label for="status" class="text-sm">Contratante:</label>
           </span>
         </div>
-  
 		<div>
+			<label for="modelo" class="text-sm">Modelo da moto</label>
+
 			<span class="p-float-label">
 			  <InputText v-model="form.modelo" readonly id="modelo" type="text" class="w-full" required maxlength="50" />
-			  <label for="modelo" class="text-sm">Modelo da moto</label>
 			</span>
 		  </div>
 
 		  <div>
+			<label for="inicio_aluguel" class="text-sm">Quantidade de dias para alugar</label>
+
 			<span class="p-float-label">
 				<input type="text" v-model="form.dias" @input="validateDias" maxlength="3" class="w-full" toggleMask autocomplete="off" style="font-family: Arial, Helvetica, sans-serif;" placeholder="Dias alugados" required>
 			</span>
 		  </div>
 
 		  <div>
+			<label for="inicio_aluguel" class="text-sm">Dia inicial do aluguel</label>
+
 			<span class="p-float-label">
 				<Calendar v-model="selectedDate" id="inicio_aluguel" :readonly-input="true" :min-date="minDate" :show-icon="true" :date-format="dateFormat" />
-			  <label for="inicio_aluguel" class="text-sm">Dia inicial do aluguel</label>
 			</span>
 		  </div>
 	   
 		  <div>
+			<label for="inicio_aluguel" class="text-sm">Valor total</label>
+
 			<span class="p-float-label">
 				<input type="text" readonly v-model="form.valor" class="w-full" toggleMask autocomplete="off" style="font-family:Georgia, 'Times New Roman', Times, serif; font-size: 18px;" placeholder="Valor total" required>
 			</span>
@@ -132,11 +139,11 @@ import Calendar from 'primevue/calendar';
   let value = form.dias.replace(/\D/g, '');
   form.dias = value;
   if(form.dias == 0){
-	form.valor = 0;
+	form.valor = 'R$'+0;
   }
   else{
 	let valorFinal = parseInt(value) * parseInt(form.valor_diaria);
-	form.valor = valorFinal;
+	form.valor = 'R$'+valorFinal;
   }
 
 	
@@ -156,12 +163,13 @@ const multiplicador = () => {
 	usuario_id: props.usuario_id,
 	nome: props.usuario_nome,
 	usuario_nome: '',
+	categoria: props.categoria,
 	modelo: props.moto_modelo,
 	moto_id: props.moto_id,
 	valor_diaria: props.valor_diaria,
 	dias: "",
 	categoria: props.categoria,
-	valor: "0",
+	valor: 'R$'+0,
 	condicao: false,
 	inicio_aluguel: selectedDate,
   

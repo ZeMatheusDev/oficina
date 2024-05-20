@@ -109,7 +109,6 @@
 		{
 			
 			$data = Session::all();
-	
 			$save = new stdClass;
 			$save->id_usuario = auth()->user()->id;
 			$save->tipo = $tipo;

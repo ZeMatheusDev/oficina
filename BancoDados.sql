@@ -407,25 +407,25 @@ CREATE TABLE problemas_motos (
 );
 
 INSERT INTO problemas_motos (tipo_problema, valor_medio, dias_para_arrumar) VALUES
-('Problemas no motor', 600.00, 3),
-('Problemas na transmissão', 800.00, 2),
-('Problemas elétricos', 400.00, 2),
-('Desgaste dos freios', 200.00, 2),
-('Problemas na suspensão', 300.00, 1),
-('Problemas no sistema de direção', 300.00, 2),
-('Vazamentos de fluidos', 150.00, 1),
-('Problemas de combustível', 200.00, 1),
-('Desgaste dos pneus', 100.00, 1),
-('Problemas no sistema de arrefecimento', 250.00, 2),
-('Problemas no sistema de escapamento', 200.00, 2),
-('Problemas de iluminação', 80.00, 2),
-('Falhas nos sistemas de segurança', 250.00, 2),
-('Problemas de corrosão', 150.00, 1),
-('Problemas com o sistema de ignição', 150.00, 2),
-('Desgaste dos componentes do sistema de direção', 200.00, 2),
-('Problemas de vedação', 100.00, 2),
-('Problemas com os sistemas de controle de emissões', 300.00, 2),
-('Outros', 150.00, 7);
+('Problemas no motor', 600, 3),
+('Problemas na transmissão', 800, 2),
+('Problemas elétricos', 400, 2),
+('Desgaste dos freios', 200, 2),
+('Problemas na suspensão', 300, 1),
+('Problemas no sistema de direção', 300, 2),
+('Vazamentos de fluidos', 150, 1),
+('Problemas de combustível', 200, 1),
+('Desgaste dos pneus', 100, 1),
+('Problemas no sistema de arrefecimento', 250, 2),
+('Problemas no sistema de escapamento', 200, 2),
+('Problemas de iluminação', 80, 2),
+('Falhas nos sistemas de segurança', 250, 2),
+('Problemas de corrosão', 150, 1),
+('Problemas com o sistema de ignição', 150, 2),
+('Desgaste dos componentes do sistema de direção', 200, 2),
+('Problemas de vedação', 100, 2),
+('Problemas com os sistemas de controle de emissões', 300, 2),
+('Outros', 150, 7);
 
 
 -- Copiando estrutura para tabela projeto_estagio.migrations

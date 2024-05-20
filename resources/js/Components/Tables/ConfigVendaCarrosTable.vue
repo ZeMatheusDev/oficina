@@ -741,7 +741,7 @@
                 >
                   <div class="flex items-center">
                     <div>
-                      <div class="font-medium text-gray-900">{{ data?.valor_para_venda }}</div>
+                      <div class="font-medium text-gray-900">R${{ data?.valor_para_venda }}</div>
                     </div>
                   </div>
                 </td>

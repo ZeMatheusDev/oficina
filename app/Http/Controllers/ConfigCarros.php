@@ -325,7 +325,7 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
 			$Registros = $this->Registros();
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
-
+			
 			return Inertia::render("vendaCarros", [
 				"columnsTable" => $columnsTable,
 				"ConfigCarros" => $ConfigCarros,
@@ -588,6 +588,119 @@ if(isset($data["ConfigCarros"]["created_at"])){
         }
 		}
 
+		public function meusAlugueis(Request $request){
+			$Modulo = "ConfigCarros";
+		$data = Session::all();
+		if(!isset($data["ConfigCarros"]) || empty($data["ConfigCarros"])){
+			session(["ConfigCarros" => array("status"=>"0", "orderBy"=>array("column"=>"created_at","sorting"=>"1"),"limit"=>"10")]);
+			$data = Session::all();
+		}
+		$Filtros = new Security;
+		if($request->input()){
+		$Limpar = false;
+		if($request->input("limparFiltros") == true){
+			$Limpar = true;
+		}
+		$arrayFilter = $Filtros->TratamentoDeFiltros($request->input(), $Limpar, ["ConfigCarros"]);	
+		if($arrayFilter){
+		session(["ConfigCarros" => $arrayFilter]);
+		$data = Session::all();
+		}
+		$columnsTable = DisabledColumns::whereRouteOfList("list.ConfigCarros")
+				->first()
+				?->columns;
+	
+			$ConfigCarros = DB::table("config_carros")
+			
+			->select(DB::raw("config_carros.*, DATE_FORMAT(config_carros.created_at, '%d/%m/%Y - %H:%i:%s') as data_final
+			
+			"));
+	
+			if(isset($data["ConfigCarros"]["orderBy"])){				
+				$Coluna = $data["ConfigCarros"]["orderBy"]["column"];			
+				$ConfigCarros =  $ConfigCarros->orderBy("config_carros.$Coluna",$data["ConfigCarros"]["orderBy"]["sorting"] ? "asc" : "desc");
+			} else {
+				$ConfigCarros =  $ConfigCarros->orderBy("config_carros.created_at", "desc");
+			}
+			
+			
+			
+if(isset($data["ConfigCarros"]["modelo"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["modelo"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.modelo",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["placa"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["placa"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.placa",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["marca"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["marca"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.marca",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["ano"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["ano"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.ano",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["cor"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["cor"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.cor",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["valor_compra"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["valor_compra"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.valor_compra",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["valor_para_venda"])){				
+	$AplicaFiltro = $data["ConfigCarros"]["valor_para_venda"];			
+	$ConfigCarros = $ConfigCarros->Where("config_carros.valor_para_venda",  "like", "%" . $AplicaFiltro . "%");			
+}
+if(isset($data["ConfigCarros"]["observacao"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["observacao"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.observacao",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["status"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["status"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.status",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["created_at"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["created_at"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.created_at",  "like", "%" . $AplicaFiltro . "%");			
+				}
+		}
+		$Registros = $this->Registros();
+        $usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+        $user = DB::table('users')->where('users.id', Auth::user()->id)->join('model_has_roles', 'model_id', 'users.id')->first();
+        $usuario_id = $user->id;
+        $Users = DB::table('users')->get();
+        $usuario_nome = $user->name;
+		$Logs = new logs;
+	    $Acao = "Acessou a listagem do Módulo de ConfigCarros";
+		$Registra = $Logs->RegistraLog(1, $Modulo, $Acao);
+		$Registros = $this->Registros();
+		$data = Session::all();
+        $meusAlugueisCarros = DB::table('aluguel_carros')->where('user_id', $usuario_id)->get();
+        $meusAlugueisMotos = DB::table('aluguel_motos')->where('user_id', $usuario_id)->get();
+		foreach($meusAlugueisCarros as $carro){
+			$carro->veiculo = 'carro';
+		}
+		foreach($meusAlugueisMotos as $moto){
+			$moto->veiculo = 'moto';
+		}
+		$meusAlugueis = $meusAlugueisCarros->concat($meusAlugueisMotos);
+
+        return Inertia::render("meusAlugueis", [
+            "hasRole" => $usuario != null,
+            'categoria' => $user->role_id,	
+            'usuario_nome' => $usuario_nome,
+            'usuario_id' => $usuario_id,
+            'Users' => $Users,
+			"Filtros" => $data["ConfigCarros"],
+            'meusAlugueis' => $meusAlugueis,
+			"Registros" => $Registros,
+
+        ]);
+
+		}
+
 		public function telaAluguel(Request $request){
 			$tokenDoCarro = $request->route('id');
 			$carro = DB::table('config_carros')->where('token', $tokenDoCarro)->first();
@@ -611,9 +724,9 @@ if(isset($data["ConfigCarros"]["created_at"])){
 		}
 
 		public function alugado(Request $request){
+			$valorFormatado = explode('$', $request->valor);
 			$carro_id = $request->carro_id;
 			$date = Carbon::parse($request->inicio_aluguel)->format('d/m/Y');
-			$valor = $request->valor;
 			$dataInicialParaSomar = Carbon::parse($request->inicio_aluguel);
 			$diasParaAdicionar = ((int)$request->dias);
 			$dataFinal = $dataInicialParaSomar->addDays($diasParaAdicionar);
@@ -623,7 +736,7 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$aluguel->user_id = $request->usuario_id;
 			$aluguel->inicio_aluguel = $date; 
 			$aluguel->fim_aluguel = $dataFinalFormatada; 
-			$aluguel->valor_total = $valor; 
+			$aluguel->valor_total = $valorFormatado[1]; 
 			$aluguel->created_at = now();
 			$aluguel->updated_at = now();
 			$aluguel->save();
