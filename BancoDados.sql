@@ -359,6 +359,75 @@ INSERT IGNORE INTO `logs_tipos` (`id`, `tipo`, `name`, `name_eng`) VALUES
 	(5, 5, 'Duplicar', 'Duplicate');
 /*!40000 ALTER TABLE `logs_tipos` ENABLE KEYS */;
 
+CREATE TABLE consertos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    problema VARCHAR(100),
+    valor_cobrado VARCHAR(100),
+    veiculo VARCHAR(100),
+    placa VARCHAR(100),
+    usuario_id bigint(20) unsigned NOT NULL
+);
+
+
+CREATE TABLE problemas_carros (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tipo_problema VARCHAR(100),
+    valor_medio VARCHAR(100),
+    dias_para_arrumar VARCHAR(100)
+);
+
+INSERT INTO problemas_carros (tipo_problema, valor_medio, dias_para_arrumar) VALUES
+('Problemas no motor', 800, 2),
+('Problemas na transmissão', 1000, 2),
+('Problemas elétricos', 500, 3),
+('Desgaste dos freios', 300, 3),
+('Problemas na suspensão', 400, 1),
+('Problemas no sistema de direção', 400, 2),
+('Vazamentos de fluidos', 200, 2),
+('Problemas de combustível', 250, 2),
+('Desgaste dos pneus', 150, 1),
+('Problemas no sistema de arrefecimento', 350, 1),
+('Problemas no sistema de escapamento', 250, 2),
+('Problemas de iluminação', 100, 2),
+('Problemas de climatização', 350, 2),
+('Falhas nos sistemas de segurança', 300, 3),
+('Problemas de corrosão', 200, 1),
+('Problemas com o sistema de ignição', 200, 2),
+('Desgaste dos componentes do sistema de direção', 300, 3),
+('Problemas com os sistemas de entretenimento e comunicação', 150, 2),
+('Problemas de vedação', 150, 1),
+('Problemas com os sistemas de controle de emissões', 400, 3),
+('Outros', 200, 7);
+
+CREATE TABLE problemas_motos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tipo_problema VARCHAR(100),
+    valor_medio VARCHAR(100),
+	dias_para_arrumar VARCHAR(100)
+);
+
+INSERT INTO problemas_motos (tipo_problema, valor_medio, dias_para_arrumar) VALUES
+('Problemas no motor', 600.00, 3),
+('Problemas na transmissão', 800.00, 2),
+('Problemas elétricos', 400.00, 2),
+('Desgaste dos freios', 200.00, 2),
+('Problemas na suspensão', 300.00, 1),
+('Problemas no sistema de direção', 300.00, 2),
+('Vazamentos de fluidos', 150.00, 1),
+('Problemas de combustível', 200.00, 1),
+('Desgaste dos pneus', 100.00, 1),
+('Problemas no sistema de arrefecimento', 250.00, 2),
+('Problemas no sistema de escapamento', 200.00, 2),
+('Problemas de iluminação', 80.00, 2),
+('Falhas nos sistemas de segurança', 250.00, 2),
+('Problemas de corrosão', 150.00, 1),
+('Problemas com o sistema de ignição', 150.00, 2),
+('Desgaste dos componentes do sistema de direção', 200.00, 2),
+('Problemas de vedação', 100.00, 2),
+('Problemas com os sistemas de controle de emissões', 300.00, 2),
+('Outros', 150.00, 7);
+
+
 -- Copiando estrutura para tabela projeto_estagio.migrations
 CREATE TABLE IF NOT EXISTS `migrations` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
