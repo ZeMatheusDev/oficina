@@ -11,6 +11,7 @@
 	use App\Models\aluguelCarro;
 	use App\Models\HistoricoAluguelCarro;
 	use App\Models\ConfigCarross;
+	use App\Models\vendaCarros;
 	use Carbon\Carbon;
 	use Illuminate\Support\Arr;
 	use Inertia\Inertia;
@@ -96,17 +97,17 @@
 			
 			
 			
-if(isset($data["ConfigCarros"]["nome"])){				
-					$AplicaFiltro = $data["ConfigCarros"]["nome"];			
-					$ConfigCarros = $ConfigCarros->Where("config_carros.nome",  "like", "%" . $AplicaFiltro . "%");			
+if(isset($data["ConfigCarros"]["modelo"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["modelo"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.modelo",  "like", "%" . $AplicaFiltro . "%");			
 				}
 if(isset($data["ConfigCarros"]["placa"])){				
 					$AplicaFiltro = $data["ConfigCarros"]["placa"];			
 					$ConfigCarros = $ConfigCarros->Where("config_carros.placa",  "like", "%" . $AplicaFiltro . "%");			
 				}
-if(isset($data["ConfigCarros"]["modelo"])){				
-					$AplicaFiltro = $data["ConfigCarros"]["modelo"];			
-					$ConfigCarros = $ConfigCarros->Where("config_carros.modelo",  "like", "%" . $AplicaFiltro . "%");			
+if(isset($data["ConfigCarros"]["marca"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["marca"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.marca",  "like", "%" . $AplicaFiltro . "%");			
 				}
 if(isset($data["ConfigCarros"]["ano"])){				
 					$AplicaFiltro = $data["ConfigCarros"]["ano"];			
@@ -120,6 +121,10 @@ if(isset($data["ConfigCarros"]["valor_compra"])){
 					$AplicaFiltro = $data["ConfigCarros"]["valor_compra"];			
 					$ConfigCarros = $ConfigCarros->Where("config_carros.valor_compra",  "like", "%" . $AplicaFiltro . "%");			
 				}
+if(isset($data["ConfigCarros"]["valor_para_venda"])){				
+	$AplicaFiltro = $data["ConfigCarros"]["valor_para_venda"];			
+	$ConfigCarros = $ConfigCarros->Where("config_carros.valor_para_venda",  "like", "%" . $AplicaFiltro . "%");			
+}
 if(isset($data["ConfigCarros"]["observacao"])){				
 					$AplicaFiltro = $data["ConfigCarros"]["observacao"];			
 					$ConfigCarros = $ConfigCarros->Where("config_carros.observacao",  "like", "%" . $AplicaFiltro . "%");			
@@ -145,6 +150,183 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 
 			return Inertia::render("ConfigCarros/List", [
+				"columnsTable" => $columnsTable,
+				"ConfigCarros" => $ConfigCarros,
+				"hasRole" => $usuario != null,
+				"Filtros" => $data["ConfigCarros"],
+				"Registros" => $Registros,
+
+			]);
+
+		} catch (Exception $e) {	
+			
+			$Error = $e->getMessage();
+			$Error = explode("MESSAGE:",$Error);
+			
+
+			$Pagina = $_SERVER["REQUEST_URI"];
+			
+			$Erro = $Error[0];
+			$Erro_Completo = $e->getMessage();
+			$LogsErrors = new logsErrosController; 
+			$Registra = $LogsErrors->RegistraErro($Pagina,$Modulo,$Erro,$Erro_Completo);
+			abort(403, "Erro localizado e enviado ao LOG de Erros");
+        }
+
+		}
+
+		public function telaCompraCarro(Request $request){
+			$tokenDoCarro = $request->route('id');
+			$carro = DB::table('config_carros')->where('token', $tokenDoCarro)->first();
+			$carro_modelo = $carro->modelo;
+			$carro_id = $carro->id;
+			$hasRole = session('hasRole');
+			$usuario = DB::table('users')->where('users.id', Auth::user()->id)->join('model_has_roles', 'model_id', 'users.id')->first();
+			$usuario_id = $usuario->id;
+			$usuario_nome = $usuario->name;
+			$Users = DB::table('users')->get();
+
+			return Inertia::render("telaCompraCarro", [
+				'hasRole' => $hasRole,
+				'usuario_id' => $usuario_id,
+				'usuario_nome' => $usuario_nome,
+				'Users' => $Users,
+				'carro_modelo' => $carro_modelo,
+				'valor_para_venda' => $carro->valor_para_venda,
+				'categoria' => $usuario->role_id,	
+				'carro_id' => $carro_id,
+			]);
+		}
+
+		public function comprandoCarro($IDConfigCarros){
+		
+			$Modulo = "ConfigCarros";
+	
+			try {
+				$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+				return redirect()->route('telaCompraCarro', ['id' => $IDConfigCarros])
+				->with(['carroId' => $IDConfigCarros, 'hasRole' => $usuario != null]);
+			} catch (Exception $e) {
+	
+				$Error = $e->getMessage();
+				$Error = explode("MESSAGE:", $Error);
+	
+				$Pagina = $_SERVER["REQUEST_URI"];
+	
+				$Erro = $Error[0];
+				$Erro_Completo = $e->getMessage();
+				$LogsErrors = new logsErrosController;
+				$Registra = $LogsErrors->RegistraErro($Pagina, $Modulo, $Erro, $Erro_Completo);
+	
+				abort(403, "Erro localizado e enviado ao LOG de Erros");
+			}
+		
+		}
+
+		public function vendaCarros(Request $request){
+						
+			$Modulo = "ConfigCarros";
+
+
+			try{
+
+			
+
+			$data = Session::all();
+
+			if(!isset($data["ConfigCarros"]) || empty($data["ConfigCarros"])){
+				session(["ConfigCarros" => array("status"=>"0", "orderBy"=>array("column"=>"created_at","sorting"=>"1"),"limit"=>"10")]);
+				$data = Session::all();
+			}
+
+			$Filtros = new Security;
+			if($request->input()){
+			$Limpar = false;
+			if($request->input("limparFiltros") == true){
+				$Limpar = true;
+			}
+
+			$arrayFilter = $Filtros->TratamentoDeFiltros($request->input(), $Limpar, ["ConfigCarros"]);	
+			if($arrayFilter){
+			session(["ConfigCarros" => $arrayFilter]);
+			$data = Session::all();
+			}
+			}
+
+
+			$columnsTable = DisabledColumns::whereRouteOfList("list.ConfigCarros")
+				->first()
+				?->columns;
+	
+			$ConfigCarros = DB::table("config_carros")
+			
+			->select(DB::raw("config_carros.*, DATE_FORMAT(config_carros.created_at, '%d/%m/%Y - %H:%i:%s') as data_final
+			
+			"));
+	
+			if(isset($data["ConfigCarros"]["orderBy"])){				
+				$Coluna = $data["ConfigCarros"]["orderBy"]["column"];			
+				$ConfigCarros =  $ConfigCarros->orderBy("config_carros.$Coluna",$data["ConfigCarros"]["orderBy"]["sorting"] ? "asc" : "desc");
+			} else {
+				$ConfigCarros =  $ConfigCarros->orderBy("config_carros.created_at", "desc");
+			}
+			
+			
+			
+if(isset($data["ConfigCarros"]["modelo"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["modelo"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.modelo",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["placa"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["placa"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.placa",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["marca"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["marca"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.marca",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["ano"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["ano"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.ano",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["cor"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["cor"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.cor",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["valor_compra"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["valor_compra"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.valor_compra",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["valor_para_venda"])){				
+	$AplicaFiltro = $data["ConfigCarros"]["valor_para_venda"];			
+	$ConfigCarros = $ConfigCarros->Where("config_carros.valor_para_venda",  "like", "%" . $AplicaFiltro . "%");			
+}
+if(isset($data["ConfigCarros"]["observacao"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["observacao"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.observacao",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["status"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["status"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.status",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["created_at"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["created_at"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.created_at",  "like", "%" . $AplicaFiltro . "%");			
+				}
+	
+			$ConfigCarros = $ConfigCarros->where("config_carros.alugado", "0")->where("config_carros.deleted", "0")->where("config_carros.vendido", "0");
+
+	
+			$ConfigCarros = $ConfigCarros->paginate(($data["ConfigCarros"]["limit"] ?: 10))
+				->appends(["page", "orderBy", "searchBy", "limit"]);
+	
+			$Acao = "Acessou a listagem do Módulo de ConfigCarros";
+			$Logs = new logs; 
+			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
+			$Registros = $this->Registros();
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+
+			return Inertia::render("vendaCarros", [
 				"columnsTable" => $columnsTable,
 				"ConfigCarros" => $ConfigCarros,
 				"hasRole" => $usuario != null,
@@ -202,6 +384,19 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			return $data;
 
 
+		}
+
+		public function compradoCarros(Request $request){
+			ConfigCarross::where('id', $request->carro_id)->update(['vendido' => 1]);
+			$verificarValorCompra = DB::table('config_carros')->where('id', $request->carro_id)->first();
+			$valorFormatado = explode('$', $request->valor);
+			$lucro = intval($valorFormatado[1]) - intval($verificarValorCompra->valor_compra);
+			$venda = new vendaCarros();
+			$venda->carro_id = $request->carro_id;
+			$venda->user_id = $request->usuario_id;
+			$venda->lucro = $lucro;
+			$venda->save();
+			return redirect()->route('home');
 		}
 	
 		public function create()
@@ -316,17 +511,17 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			
 			
 			
-if(isset($data["ConfigCarros"]["nome"])){				
-					$AplicaFiltro = $data["ConfigCarros"]["nome"];			
-					$ConfigCarros = $ConfigCarros->Where("config_carros.nome",  "like", "%" . $AplicaFiltro . "%");			
+if(isset($data["ConfigCarros"]["modelo"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["modelo"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.modelo",  "like", "%" . $AplicaFiltro . "%");			
 				}
 if(isset($data["ConfigCarros"]["placa"])){				
 					$AplicaFiltro = $data["ConfigCarros"]["placa"];			
 					$ConfigCarros = $ConfigCarros->Where("config_carros.placa",  "like", "%" . $AplicaFiltro . "%");			
 				}
-if(isset($data["ConfigCarros"]["modelo"])){				
-					$AplicaFiltro = $data["ConfigCarros"]["modelo"];			
-					$ConfigCarros = $ConfigCarros->Where("config_carros.modelo",  "like", "%" . $AplicaFiltro . "%");			
+if(isset($data["ConfigCarros"]["marca"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["marca"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.marca",  "like", "%" . $AplicaFiltro . "%");			
 				}
 if(isset($data["ConfigCarros"]["ano"])){				
 					$AplicaFiltro = $data["ConfigCarros"]["ano"];			
@@ -340,6 +535,10 @@ if(isset($data["ConfigCarros"]["valor_compra"])){
 					$AplicaFiltro = $data["ConfigCarros"]["valor_compra"];			
 					$ConfigCarros = $ConfigCarros->Where("config_carros.valor_compra",  "like", "%" . $AplicaFiltro . "%");			
 				}
+if(isset($data["ConfigCarros"]["valor_para_venda"])){				
+	$AplicaFiltro = $data["ConfigCarros"]["valor_para_venda"];			
+	$ConfigCarros = $ConfigCarros->Where("config_carros.valor_para_venda",  "like", "%" . $AplicaFiltro . "%");			
+}
 if(isset($data["ConfigCarros"]["observacao"])){				
 					$AplicaFiltro = $data["ConfigCarros"]["observacao"];			
 					$ConfigCarros = $ConfigCarros->Where("config_carros.observacao",  "like", "%" . $AplicaFiltro . "%");			
@@ -392,17 +591,20 @@ if(isset($data["ConfigCarros"]["created_at"])){
 		public function telaAluguel(Request $request){
 			$tokenDoCarro = $request->route('id');
 			$carro = DB::table('config_carros')->where('token', $tokenDoCarro)->first();
-			$carro_nome = $carro->nome;
+			$carro_modelo = $carro->modelo;
 			$carro_id = $carro->id;
 			$hasRole = session('hasRole');
-			$usuario = DB::table('users')->where('id', Auth::user()->id)->first();
+			$usuario = DB::table('users')->where('users.id', Auth::user()->id)->join('model_has_roles', 'model_id', 'users.id')->first();
+			$Users = DB::table('users')->get();
 			$usuario_id = $usuario->id;
 			$usuario_nome = $usuario->name;
 			return Inertia::render("telaAluguelCarros", [
 				'hasRole' => $hasRole,
 				'usuario_id' => $usuario_id,
+				'categoria' => $usuario->role_id,	
+				'Users' => $Users,
 				'usuario_nome' => $usuario_nome,
-				'carro_nome' => $carro_nome,
+				'carro_modelo' => $carro_modelo,
 				'valor_diaria' => $carro->valor_diaria,
 				'carro_id' => $carro_id,
 			]);
@@ -418,7 +620,7 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$dataFinalFormatada = $dataFinal->format('d/m/Y');
 			$aluguel = new AluguelCarro();
 			$aluguel->carro_id = $carro_id;
-			$aluguel->user_id = Auth::user()->id;
+			$aluguel->user_id = $request->usuario_id;
 			$aluguel->inicio_aluguel = $date; 
 			$aluguel->fim_aluguel = $dataFinalFormatada; 
 			$aluguel->valor_total = $valor; 
@@ -490,16 +692,17 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			}
 
 			$save = new stdClass;
-			$save->nome = $request->nome;
+			$save->modelo = $request->modelo;
 		 	$save->anexo = $url;
 $save->placa = $request->placa;
-$save->modelo = $request->modelo;
+$save->marca = $request->marca;
 $save->valor_diaria = $request->valor_diaria;
 $save->alugado = 0;
 $save->vendido = 0;
 $save->ano = $request->ano;
 $save->cor = $request->cor;
 $save->valor_compra = $request->valor_compra;
+$save->valor_para_venda = $request->valor_para_venda;
 $save->observacao = $request->observacao;
 $save->status = $request->status;
 $save->token = md5(date("Y-m-d H:i:s").rand(0,999999999));
@@ -629,14 +832,15 @@ $save->token = md5(date("Y-m-d H:i:s").rand(0,999999999));
 				
 	
 				$save = new stdClass;
-				$save->nome = $request->nome;
+				$save->modelo = $request->modelo;
 				if($url){ $save->anexo = $url;}
 $save->placa = $request->placa;
-$save->modelo = $request->modelo;
+$save->marca = $request->marca;
 $save->ano = $request->ano;
 $save->cor = $request->cor;
 $save->valor_diaria = $request->valor_diaria;
 $save->valor_compra = $request->valor_compra;
+$save->valor_para_venda = $request->valor_para_venda;
 $save->observacao = $request->observacao;
 $save->status = $request->status;
 $save->token = md5(date("Y-m-d H:i:s").rand(0,999999999));
@@ -868,17 +1072,17 @@ $save->token = md5(date("Y-m-d H:i:s").rand(0,999999999));
 			->where("config_carros.deleted","0");
 
 			
-if(isset($data["ConfigCarros"]["nome"])){				
-					$AplicaFiltro = $data["ConfigCarros"]["nome"];			
-					$ConfigCarros = $ConfigCarros->Where("config_carros.nome",  "like", "%" . $AplicaFiltro . "%");			
+if(isset($data["ConfigCarros"]["modelo"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["modelo"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.modelo",  "like", "%" . $AplicaFiltro . "%");			
 				}
 if(isset($data["ConfigCarros"]["placa"])){				
 					$AplicaFiltro = $data["ConfigCarros"]["placa"];			
 					$ConfigCarros = $ConfigCarros->Where("config_carros.placa",  "like", "%" . $AplicaFiltro . "%");			
 				}
-if(isset($data["ConfigCarros"]["modelo"])){				
-					$AplicaFiltro = $data["ConfigCarros"]["modelo"];			
-					$ConfigCarros = $ConfigCarros->Where("config_carros.modelo",  "like", "%" . $AplicaFiltro . "%");			
+if(isset($data["ConfigCarros"]["marca"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["marca"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.marca",  "like", "%" . $AplicaFiltro . "%");			
 				}
 if(isset($data["ConfigCarros"]["ano"])){				
 					$AplicaFiltro = $data["ConfigCarros"]["ano"];			
@@ -891,6 +1095,10 @@ if(isset($data["ConfigCarros"]["cor"])){
 if(isset($data["ConfigCarros"]["valor_compra"])){				
 					$AplicaFiltro = $data["ConfigCarros"]["valor_compra"];			
 					$ConfigCarros = $ConfigCarros->Where("config_carros.valor_compra",  "like", "%" . $AplicaFiltro . "%");			
+				}
+if(isset($data["ConfigCarros"]["valor_para_venda"])){				
+					$AplicaFiltro = $data["ConfigCarros"]["valor_para_venda"];			
+					$ConfigCarros = $ConfigCarros->Where("config_carros.valor_para_venda",  "like", "%" . $AplicaFiltro . "%");			
 				}
 if(isset($data["ConfigCarros"]["observacao"])){				
 					$AplicaFiltro = $data["ConfigCarros"]["observacao"];			
@@ -917,12 +1125,13 @@ if(isset($data["ConfigCarros"]["created_at"])){
 				}
 				$Dadosconfig_carros[] = [	
 					
-'nome' => $config_carross->nome,
-'placa' => $config_carross->placa,
 'modelo' => $config_carross->modelo,
+'placa' => $config_carross->placa,
+'marca' => $config_carross->marca,
 'ano' => $config_carross->ano,
 'cor' => $config_carross->cor,
 'valor_compra' => $config_carross->valor_compra,
+'valor_para_venda' => $config_carross->valor_para_venda,
 'observacao' => $config_carross->observacao,
 'status' => $config_carross->status,
 'data_final' => $config_carross->data_final
@@ -947,7 +1156,7 @@ if(isset($data["ConfigCarros"]["created_at"])){
 				// Arquivo foi deletado com sucesso
 			}	
 					
-			$cabecalhoAba1 = array('nome','placa','modelo','ano','cor','valor_compra','observacao','status','Data de Cadastro');
+			$cabecalhoAba1 = array('modelo','placa','marca','ano','cor','valor de compra','observacao','status','Data de Cadastro');
 
 			$spreadsheet = new Spreadsheet();
 			$sheet = $spreadsheet->getActiveSheet();

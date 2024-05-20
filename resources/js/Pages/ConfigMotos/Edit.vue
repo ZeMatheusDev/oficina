@@ -18,8 +18,8 @@
 
         <div>
           <span class="p-float-label">
-            <InputText v-model="form.nome" id="nome" type="text" class="w-full" required maxlength="50" />
-            <label for="nome" class="text-sm">Nome</label>
+            <InputText v-model="form.modelo" id="modelo" type="text" class="w-full" required maxlength="50" />
+            <label for="modelo" class="text-sm">modelo</label>
           </span>
         </div>
      
@@ -39,6 +39,20 @@
 
         <div>
           <span class="p-float-label">
+            <InputText v-model="form.placa" id="placa" type="text" class="w-full" required maxlength="50" />
+            <label for="placa" class="text-sm">Placa</label>
+          </span>
+        </div>
+
+        <div>
+          <span class="p-float-label">
+            <InputText v-model="form.ano" id="ano" type="text" class="w-full" required maxlength="50" />
+            <label for="ano" class="text-sm">Ano</label>
+          </span>
+        </div>
+
+        <div>
+          <span class="p-float-label">
             <InputText v-model="form.valor_diaria" id="valor_diaria" type="text" class="w-full" required maxlength="50" />
             <label for="valor_diaria" class="text-sm">Valor da diaria</label>
           </span>
@@ -51,6 +65,12 @@
           </span>
         </div>
 
+        <div>
+          <span class="p-float-label">
+            <InputText v-model="form.valor_para_venda" id="valor_para_venda" type="text" class="w-full" required maxlength="50" />
+            <label for="valor_para_venda" class="text-sm">Valor para venda</label>
+          </span>
+        </div>
         
         <div>
           <span class="p-float-label">
@@ -137,7 +157,7 @@ const submited = ref(false);
 const form = useForm({
   token: $propsPage?.value.ConfigMotos?.token,
 
-  nome: $propsPage?.value.ConfigMotos?.nome,
+  modelo: $propsPage?.value.ConfigMotos?.modelo,
 
   marca: $propsPage?.value.ConfigMotos?.marca,
 
@@ -145,9 +165,15 @@ const form = useForm({
   
   cor: $propsPage?.value.ConfigMotos?.cor,
 
+  placa: $propsPage?.value.ConfigMotos?.placa,
+
+  ano: $propsPage?.value.ConfigMotos?.ano,
+
   valor_diaria: $propsPage?.value.ConfigMotos?.valor_diaria,  
 
   valor_compra: $propsPage?.value.ConfigMotos?.valor_compra,
+
+  valor_para_venda: $propsPage?.value.ConfigMotos?.valor_para_venda,
 
   observacoes: $propsPage?.value.ConfigMotos?.observacoes,
 

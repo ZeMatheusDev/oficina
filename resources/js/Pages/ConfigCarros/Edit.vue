@@ -26,14 +26,14 @@
         <div>
           <span class="p-float-label">
             <InputText
-              v-model="form.nome"
-              id="nome"
+              v-model="form.modelo"
+              id="modelo"
               type="text"
               class="w-full"
               required
               maxlength="50"
             />
-            <label for="nome" class="text-sm">Nome</label>
+            <label for="modelo" class="text-sm">Modelo</label>
           </span>
         </div>
         <div>
@@ -52,14 +52,14 @@
         <div>
           <span class="p-float-label">
             <InputText
-              v-model="form.modelo"
-              id="modelo"
+              v-model="form.marca"
+              id="marca"
               type="text"
               class="w-full"
               required
               maxlength="50"
             />
-            <label for="modelo" class="text-sm">Modelo</label>
+            <label for="marca" class="text-sm">Marca</label>
           </span>
         </div>
         <div>
@@ -112,6 +112,19 @@
               maxlength="50"
             />
             <label for="valor_compra" class="text-sm">Valor da Compra</label>
+          </span>
+        </div>
+        <div>
+          <span class="p-float-label">
+            <InputText
+              v-model="form.valor_para_venda"
+              id="valor_para_venda"
+              type="text"
+              class="w-full"
+              required
+              maxlength="50"
+            />
+            <label for="valor_para_venda" class="text-sm">Valor para venda</label>
           </span>
         </div>
         <div>
@@ -224,13 +237,13 @@ const submited = ref(false);
 const form = useForm({
   token: $propsPage?.value.ConfigCarros?.token,
 
-  nome: $propsPage?.value.ConfigCarros?.nome,
+  modelo: $propsPage?.value.ConfigCarros?.modelo,
 
   anexo: $propsPage?.value.ConfigCarros?.anexo,
 
   placa: $propsPage?.value.ConfigCarros?.placa,
 
-  modelo: $propsPage?.value.ConfigCarros?.modelo,
+  marca: $propsPage?.value.ConfigCarros?.marca,
 
   ano: $propsPage?.value.ConfigCarros?.ano,
 
@@ -239,6 +252,8 @@ const form = useForm({
   valor_diaria: $propsPage?.value.ConfigCarros?.valor_diaria,
 
   valor_compra: $propsPage?.value.ConfigCarros?.valor_compra,
+
+  valor_para_venda: $propsPage?.value.ConfigCarros?.valor_para_venda,
 
   observacao: $propsPage?.value.ConfigCarros?.observacao,
 

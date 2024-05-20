@@ -107,8 +107,8 @@
 				
 					<div>
 						<span class="p-float-label">
-							<InputText v-model="form2.nome" id="nome" type="text" class="w-full" required />
-							<label for="nome" class="text-sm">Nome</label>
+							<InputText v-model="form2.modelo" id="modelo" type="text" class="w-full" required />
+							<label for="modelo" class="text-sm">Modelo</label>
 						</span>
 					</div>
 					
@@ -123,6 +123,13 @@
 						<span class="p-float-label">
 							<InputText v-model="form2.cor" id="cor" type="text" class="w-full" required />
 							<label for="cor" class="text-sm">Cor</label>
+						</span>
+					</div>
+
+					<div>
+						<span class="p-float-label">
+							<InputText v-model="form2.placa" id="placa" type="text" class="w-full" required />
+							<label for="placa" class="text-sm">Placa</label>
 						</span>
 					</div>
 
@@ -190,8 +197,8 @@
 					<span class="font-semibold">Colunas Visíveis:</span>
 
 					<div class="flex items-center space-x-2">
-						<Checkbox @change="toggleColumns" :binary="true" v-model="formColumns['columns']['nome']" />
-						<span>Nome</span>
+						<Checkbox @change="toggleColumns" :binary="true" v-model="formColumns['columns']['modelo']" />
+						<span>Modelo</span>
 					</div>
 					
 					<div class="flex items-center space-x-2">
@@ -202,6 +209,16 @@
 					<div class="flex items-center space-x-2">
 						<Checkbox @change="toggleColumns" :binary="true" v-model="formColumns['columns']['cor']" />
 						<span>Cor</span>
+					</div>
+
+					<div class="flex items-center space-x-2">
+						<Checkbox @change="toggleColumns" :binary="true" v-model="formColumns['columns']['placa']" />
+						<span>Placa</span>
+					</div>
+
+					<div class="flex items-center space-x-2">
+						<Checkbox @change="toggleColumns" :binary="true" v-model="formColumns['columns']['ano']" />
+						<span>Ano</span>
 					</div>
 
 					<div class="flex items-center space-x-2">
@@ -247,11 +264,11 @@
 									</svg>
 								</th>
 
-								<th v-if="formColumns.columns.nome" scope="col"
+								<th v-if="formColumns.columns.modelo" scope="col"
 									class="px-4 text-sm cursor-pointer text-center border-r group"
-									@click="orderBy = { column: 'nome', sorting: sortTable(sortVal.nome) ? sortVal.nome = 1 : sortVal.nome = 0 }">
+									@click="orderBy = { column: 'modelo', sorting: sortTable(sortVal.modelo) ? sortVal.modelo = 1 : sortVal.modelo = 0 }">
 									<div class="flex">
-										<span class="group-hover:text-indigo-800">Nome</span>
+										<span class="group-hover:text-indigo-800">Modelo</span>
 										<svg xmlns="http://www.w3.org/2000/svg"
 											class="h-5 w-5 ml-auto group-hover:text-indigo-800" fill="none"
 											viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -289,7 +306,33 @@
 									</div>
 								</th>
 
-	
+								<th v-if="formColumns.columns.placa" scope="col"
+									class="px-4 text-sm cursor-pointer text-center border-r group"
+									@click="orderBy = { column: 'placa', sorting: sortTable(sortVal.placa) ? sortVal.placa = 1 : sortVal.placa = 0 }">
+									<div class="flex">
+										<span class="group-hover:text-indigo-800">Placa</span>
+										<svg xmlns="http://www.w3.org/2000/svg"
+											class="h-5 w-5 ml-auto group-hover:text-indigo-800" fill="none"
+											viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+											<path stroke-linecap="round" stroke-linejoin="round"
+												d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+										</svg>
+									</div>
+								</th>
+
+								<th v-if="formColumns.columns.ano" scope="col"
+									class="px-4 text-sm cursor-pointer text-center border-r group"
+									@click="orderBy = { column: 'ano', sorting: sortTable(sortVal.ano) ? sortVal.ano = 1 : sortVal.ano = 0 }">
+									<div class="flex">
+										<span class="group-hover:text-indigo-800">Ano</span>
+										<svg xmlns="http://www.w3.org/2000/svg"
+											class="h-5 w-5 ml-auto group-hover:text-indigo-800" fill="none"
+											viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+											<path stroke-linecap="round" stroke-linejoin="round"
+												d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+										</svg>
+									</div>
+								</th>
 
 								<th v-if="formColumns.columns.valor_diaria" scope="col"
 									class="px-4 text-sm cursor-pointer text-center border-r group"
@@ -364,11 +407,11 @@
 									</div>
 								</td>
 
-								<td v-if="formColumns?.columns?.nome"
+								<td v-if="formColumns?.columns?.modelo"
 									class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
 									<div class="flex items-center">
 										<div>
-											<div class="font-medium text-gray-900">{{ data?.nome }}</div>
+											<div class="font-medium text-gray-900">{{ data?.modelo }}</div>
 										</div>
 									</div>
 								</td>
@@ -390,12 +433,30 @@
 										</div>
 									</div>
 								</td>
+								
+								<td v-if="formColumns?.columns?.placa"
+									class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+									<div class="flex items-center">
+										<div>
+											<div class="font-medium text-gray-900">{{ data?.placa }}</div>
+										</div>
+									</div>
+								</td>
+								
+								<td v-if="formColumns?.columns?.ano"
+									class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+									<div class="flex items-center">
+										<div>
+											<div class="font-medium text-gray-900">{{ data?.ano }}</div>
+										</div>
+									</div>
+								</td>
 
 								<td v-if="formColumns?.columns?.valor_diaria"
 									class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
 									<div class="flex items-center">
 										<div>
-											<div class="font-medium text-gray-900">{{ data?.valor_diaria }}</div>
+											<div class="font-medium text-gray-900">R${{ data?.valor_diaria }}</div>
 			
 										</div>
 									</div>
@@ -517,9 +578,11 @@ const statusOption = [
 
 const sortVal = {
 
-	nome: 1,
+	modelo: 1,
 	marca: 1,
 	cor: 1,
+	placa: 1,
+	ano: 1,
 	valor_diaria: 1,
 	observacoes: 1,
 	status: 1,
@@ -529,10 +592,11 @@ const sortVal = {
 const formColumns = useForm({
 	route_of_list: "list.ConfigMotos",
 	columns: {
-
-		nome: validateColumnsVisibility("nome"),
+		modelo: validateColumnsVisibility("modelo"),
 		marca: validateColumnsVisibility("marca"),
 		cor: validateColumnsVisibility("cor"),
+		placa: validateColumnsVisibility("cor"),
+		ano: validateColumnsVisibility("cor"),
 		valor_diaria: validateColumnsVisibility("valor_diaria"),
 		observacoes: validateColumnsVisibility("observacoes"),
 		status: validateColumnsVisibility("status"),
@@ -542,9 +606,11 @@ const formColumns = useForm({
 
 const form2 = useForm({
 
-	nome: props.Filtros?.nome || null,
+	modelo: props.Filtros?.modelo || null,
 	marca: props.Filtros?.marca || null,
 	cor: props.Filtros?.cor || null,
+	placa: props.Filtros?.placa || null,
+	ano: props.Filtros?.ano || null,
 	valor_diaria: props.Filtros?.valor_diaria || null,
 	observacoes: props.Filtros?.observacoes || null,
 	status: {value: props.Filtros?.status || null},
@@ -637,7 +703,7 @@ function setParams() {
 	  submitForm,
 	};  
 	!orderBy.value?.length ? (data.orderBy = orderBy?.value) : "";  
-	submitForm.post(route("listP.ConfigMotos"), {
+	submitForm.post(route("list.ConfigMotos"), {
 	  replace: false,
 	  data,
 	  onSuccess: () => {

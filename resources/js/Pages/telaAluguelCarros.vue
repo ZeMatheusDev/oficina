@@ -15,17 +15,25 @@
   
 		<div class="mt-10 grid grid-cols-1 gap-6 max-md:grid-cols-1">
   
-		<div>
+			<div class="form-group" v-if="form.categoria == 8">
+    <span class="p-float-label">
+      <InputText v-model="form.usuario_id" :value="form.nome" :readonly="verificarCondicao()" id="nome" type="text" class="w-full" required maxlength="50" />
+      <label for="nome" class="text-sm">Contratante:</label>
+    </span>
+  </div>
+
+		<div class="form-group" v-if="form.categoria != 8">
           <span class="p-float-label">
-            <InputText v-model="form.nome" readonly id="nome" type="text" class="w-full" required maxlength="50" />
-            <label for="nome" class="text-sm">Contratante:</label>
+            <Dropdown class="w-full" v-model="form.usuario_id" :value="form.nome" :options="Users" optionLabel="name" dataKey="value"
+              required />
+            <label for="status" class="text-sm">Contratante:</label>
           </span>
         </div>
 		
 		  <div>
 			<span class="p-float-label">
 			  <InputText v-model="form.modelo" readonly id="modelo" type="text" class="w-full" required maxlength="50" />
-			  <label for="modelo" class="text-sm">Modelo da carro</label>
+			  <label for="modelo" class="text-sm">Modelo do carro</label>
 			</span>
 		  </div>
   
@@ -95,10 +103,12 @@ import Calendar from 'primevue/calendar';
   const props = defineProps({
 	errorBags: Object,
 	carro_id: String,
-	carro_nome: String,
+	carro_modelo: String,
 	valor_diaria : String,
 	usuario_nome: String,
 	usuario_id: String,
+	categoria: String,
+	Users: Object,
   });
   
   const toast = useToast();
@@ -109,7 +119,10 @@ import Calendar from 'primevue/calendar';
   const minDate = ref(moment().toDate()); // Use moment.js para obter a data atual
 
 
-  
+  const Users = $propsPage?.value?.Users?.map((val) => {
+	return { name: val.name, value: val.id };
+	});
+
   const currentNav = ref(1);
   
   const statusOption = [
@@ -140,10 +153,12 @@ const multiplicador = () => {
   const submited = ref(false);
   
   const form = useForm({
-  
+  	condicao: false,
+	usuario_id: props.usuario_id,
 	nome: props.usuario_nome,
-	modelo: props.carro_nome,
+	modelo: props.carro_modelo,
 	carro_id: props.carro_id,
+	categoria: props.categoria,
 	valor_diaria: props.valor_diaria,
 	dias: "",
 	valor: "0",
@@ -177,6 +192,15 @@ const multiplicador = () => {
 	}
 	return newForm;
   }
+  function verificarCondicao(){
+	if(form.categoria == 8){
+		form.condicao = true;
+	}
+	else{
+		form.condicao = false;
+	}
+	return form.condicao;
+  }
   function submit() {
 	validateForm();
 	submited.value = true;
@@ -195,7 +219,7 @@ const multiplicador = () => {
 	  },
 	  onSuccess: () => {
 		form.reset();
-		toast.success("Salvo com sucesso!");
+		toast.success("Aluguel feito com sucesso!");
 	  },
 	  onFinish: () => (submited.value = false),
 	});

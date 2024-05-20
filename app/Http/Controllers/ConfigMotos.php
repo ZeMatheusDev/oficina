@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use App\Models\Office;
 use App\Models\ConfigMotoss;
+use App\Models\VendaMotos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Inertia\Inertia;
@@ -96,9 +97,9 @@ class ConfigMotos extends Controller
 
 			//MODELO DE FILTRO PARA VOCE COLOCAR AQUI, PARA CADA COLUNA DO BANCO DE DADOS DEVERÁ TER UM IF PARA APLICAR O FILTRO, EXCLUIR O FILTRO DE ID, DELETED E UPDATED_AT
 
-			if (isset($data["ConfigMotos"]["nome"])) {
-				$AplicaFiltro = $data["ConfigMotos"]["nome"];
-				$ConfigMotos = $ConfigMotos->Where("config_motos.nome",  "like", "%" . $AplicaFiltro . "%");
+			if (isset($data["ConfigMotos"]["modelo"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["modelo"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.modelo",  "like", "%" . $AplicaFiltro . "%");
 			}
 
 			if (isset($data["ConfigMotos"]["marca"])) {
@@ -111,9 +112,24 @@ class ConfigMotos extends Controller
 				$ConfigMotos = $ConfigMotos->Where("config_motos.cor",  "like", "%" . $AplicaFiltro . "%");
 			}
 
+			if (isset($data["ConfigMotos"]["placa"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["placa"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.placa",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["ano"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["ano"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.ano",  "like", "%" . $AplicaFiltro . "%");
+			}
+
 			if (isset($data["ConfigMotos"]["valor_compra"])) {
 				$AplicaFiltro = $data["ConfigMotos"]["valor_compra"];
 				$ConfigMotos = $ConfigMotos->Where("config_motos.valor_compra",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["valor_para_venda"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["valor_para_venda"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.valor_para_venda",  "like", "%" . $AplicaFiltro . "%");
 			}
 
 			if (isset($data["ConfigMotos"]["valor_diaria"])) {
@@ -152,9 +168,170 @@ class ConfigMotos extends Controller
 				"hasRole" => $usuario != null,
 				"Filtros" => $data["ConfigMotos"],
 				"Registros" => $Registros,
-
 			]);
 		} catch (Exception $e) {
+
+			$Error = $e->getMessage();
+			$Error = explode("MESSAGE:", $Error);
+
+
+			$Pagina = $_SERVER["REQUEST_URI"];
+
+			$Erro = $Error[0];
+			$Erro_Completo = $e->getMessage();
+			$LogsErrors = new logsErrosController;
+			$Registra = $LogsErrors->RegistraErro($Pagina, $Modulo, $Erro, $Erro_Completo);
+			abort(403, "Erro localizado e enviado ao LOG de Erros");
+		}
+	}
+
+	public function vendaMotos(Request $request){
+		$Modulo = "ConfigMotos";
+
+		$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+
+		$dataDeHoje = Carbon::now();
+	
+		$motosAlugadas = DB::table('aluguel_motos')->get();
+		
+		foreach($motosAlugadas as $moto){
+			$fimAluguel = Carbon::createFromFormat('d/m/Y', $moto->fim_aluguel);
+			if($fimAluguel < $dataDeHoje){
+				$historico = new HistoricoAluguelMoto();
+				$historico->moto_id = $moto->moto_id;
+				$historico->user_id = $moto->user_id;
+				$historico->inicio_aluguel = $moto->inicio_aluguel;
+				$historico->fim_aluguel = $moto->fim_aluguel;
+				$historico->valor_total = $moto->valor_total;
+				$historico->save();
+				ConfigMotoss::where('id', $moto->moto_id)->update(['alugado' => 0]);
+				AluguelMoto::where('id', $moto->id)->delete();
+			}
+		}
+
+		try{
+			$verificarMotosNaoAlugadas = DB::table('config_motos')->where('alugado', 0)->get();
+			$data = Session::all();
+
+			if (!isset($data["ConfigMotos"]) || empty($data["ConfigMotos"])) {
+				session(["ConfigMotos" => array("status" => "0", "orderBy" => array("column" => "created_at", "sorting" => "1"), "limit" => "10")]);
+				$data = Session::all();
+			}
+
+			$Filtros = new Security;
+			if ($request->input()) {
+				$Limpar = false;
+				if ($request->input("limparFiltros") == true) {
+					$Limpar = true;
+				}
+
+				$arrayFilter = $Filtros->TratamentoDeFiltros($request->input(), $Limpar, ["ConfigMotos"]);
+				if ($arrayFilter) {
+					session(["ConfigMotos" => $arrayFilter]);
+
+					$data = Session::all();
+				}
+
+			}
+
+
+			$columnsTable = DisabledColumns::whereRouteOfList("list.ConfigMotos")
+				->first()
+				?->columns;
+
+			$ConfigMotos = DB::table("config_motos")
+
+				->select(DB::raw("config_motos.*, DATE_FORMAT(config_motos.created_at, '%d/%m/%Y - %H:%i:%s') as data_final
+			
+			"));
+
+			if (isset($data["ConfigMotos"]["orderBy"])) {
+				if(isset($data["ConfigMotos"]["orderBy"]["column"])){
+					$Coluna = $data["ConfigMotos"]["orderBy"]["column"];
+				
+				$ConfigMotos =  $ConfigMotos->orderBy("config_motos.$Coluna", $data["ConfigMotos"]["orderBy"]["sorting"] ? "asc" : "desc");
+				}
+			} else {
+				$ConfigMotos =  $ConfigMotos->orderBy("config_motos.created_at", "desc");
+			}
+
+			//MODELO DE FILTRO PARA VOCE COLOCAR AQUI, PARA CADA COLUNA DO BANCO DE DADOS DEVERÁ TER UM IF PARA APLICAR O FILTRO, EXCLUIR O FILTRO DE ID, DELETED E UPDATED_AT
+
+			if (isset($data["ConfigMotos"]["modelo"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["modelo"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.modelo",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["marca"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["marca"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.marca",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["cor"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["cor"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.cor",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["placa"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["placa"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.placa",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["ano"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["ano"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.ano",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["valor_diaria"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["valor_diaria"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.valor_diaria",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["valor_compra"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["valor_compra"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.valor_compra",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["valor_para_venda"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["valor_para_venda"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.valor_para_venda",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["observacoes"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["observacoes"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.observacoes",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["status"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["status"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.status",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["created_at"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["created_at"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.created_at",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			$ConfigMotos = $ConfigMotos->where("config_motos.alugado", "0")->where("config_motos.deleted", "0")->where("config_motos.vendido", "0");
+
+			$ConfigMotos = $ConfigMotos->paginate(($data["ConfigMotos"]["limit"] ?: 10))
+				->appends(["page", "orderBy", "searchBy", "limit"]);
+			
+			$Acao = "Acessou a listagem do Módulo de ConfigMotos";
+			$Logs = new logs;
+			$Registra = $Logs->RegistraLog(1, $Modulo, $Acao);
+			$Registros = $this->Registros();
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+			return Inertia::render("vendaMotos", [
+				"columnsTable" => $columnsTable,
+				"ConfigMotos" => $ConfigMotos,
+				"hasRole" => $usuario != null,
+				"Filtros" => $data["ConfigMotos"],
+				"Registros" => $Registros,
+
+			]);
+
+		}catch (Exception $e) {
 
 			$Error = $e->getMessage();
 			$Error = explode("MESSAGE:", $Error);
@@ -282,13 +459,16 @@ class ConfigMotos extends Controller
 
 			$save = new stdClass;
 			//MODELO DE INSERT PARA VOCE FAZER COM TODAS AS COLUNAS DO BANCO DE DADOS, MENOS ID, DELETED E UPDATED_AT
-			$save->nome = $request->nome;
+			$save->modelo = $request->modelo;
+			$save->placa = $request->placa;
+			$save->ano = $request->ano;
 			$save->empresa_id = 1;
 			$save->valor_diaria = $request->valor_diaria;
 			$save->marca = $request->marca;
 			$save->anexo = $url;
 			$save->cor = $request->cor;
 			$save->valor_compra = $request->valor_compra;
+			$save->valor_para_venda = $request->valor_para_venda;
 			$save->observacoes = $request->observacoes;
 			
 
@@ -415,11 +595,14 @@ class ConfigMotos extends Controller
 
 			$save = new stdClass;
 			if($url){ $save->anexo = $url;}
-			$save->nome = $request->nome;
+			$save->modelo = $request->modelo;
 			$save->marca = $request->marca;
+			$save->placa = $request->placa;
+			$save->ano = $request->ano;
 			$save->cor = $request->cor;
 			$save->valor_diaria = $request->valor_diaria;
 			$save->valor_compra = $request->valor_compra;
+			$save->valor_para_venda = $request->valor_para_venda;
 			$save->observacoes = $request->observacoes;
 			//MODELO DE INSERT PARA VOCE FAZER COM TODAS AS COLUNAS DO BANCO DE DADOS, MENOS ID, DELETED E UPDATED_AT
 			
@@ -457,17 +640,20 @@ class ConfigMotos extends Controller
 	public function telaAluguel(Request $request){
 		$tokenDaMoto = $request->route('id');
 		$moto = DB::table('config_motos')->where('token', $tokenDaMoto)->first();
-		$moto_nome = $moto->nome;
+		$moto_modelo = $moto->modelo;
 		$moto_id = $moto->id;
 		$hasRole = session('hasRole');
-		$usuario = DB::table('users')->where('id', Auth::user()->id)->first();
+		$usuario = DB::table('users')->where('users.id', Auth::user()->id)->join('model_has_roles', 'model_id', 'users.id')->first();
 		$usuario_id = $usuario->id;
+		$Users = DB::table('users')->get();
 		$usuario_nome = $usuario->name;
 		return Inertia::render("telaAluguel", [
 			'hasRole' => $hasRole,
 			'usuario_id' => $usuario_id,
 			'usuario_nome' => $usuario_nome,
-			'moto_nome' => $moto_nome,
+			'categoria' => $usuario->role_id,	
+			'Users' => $Users,
+			'moto_modelo' => $moto_modelo,
 			'valor_diaria' => $moto->valor_diaria,
 			'moto_id' => $moto_id,
 		]);
@@ -496,6 +682,67 @@ class ConfigMotos extends Controller
 			abort(403, "Erro localizado e enviado ao LOG de Erros");
 		}
 
+	}
+
+	public function comprando($IDConfigMotos){
+		
+		$Modulo = "ConfigMotos";
+
+		try {
+			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+			return redirect()->route('telaCompraMoto', ['id' => $IDConfigMotos])
+			->with(['motoId' => $IDConfigMotos, 'hasRole' => $usuario != null]);
+		} catch (Exception $e) {
+
+			$Error = $e->getMessage();
+			$Error = explode("MESSAGE:", $Error);
+
+			$Pagina = $_SERVER["REQUEST_URI"];
+
+			$Erro = $Error[0];
+			$Erro_Completo = $e->getMessage();
+			$LogsErrors = new logsErrosController;
+			$Registra = $LogsErrors->RegistraErro($Pagina, $Modulo, $Erro, $Erro_Completo);
+
+			abort(403, "Erro localizado e enviado ao LOG de Erros");
+		}
+
+	}
+
+	public function compradoMotos(Request $request){
+		ConfigMotoss::where('id', $request->moto_id)->update(['vendido' => 1]);
+		$verificarValorCompra = DB::table('config_motos')->where('id', $request->moto_id)->first();
+		$valorFormatado = explode('$', $request->valor);
+		$lucro = intval($valorFormatado[1]) - intval($verificarValorCompra->valor_compra);
+		$venda = new VendaMotos();
+		$venda->moto_id = $request->moto_id;
+		$venda->user_id = $request->usuario_id;
+		$venda->lucro = $lucro;
+		$venda->save();
+		return redirect()->route('home');
+	}
+
+	public function telaCompraMoto(Request $request){
+		$tokenDaMoto = $request->route('id');
+		$moto = DB::table('config_motos')->where('token', $tokenDaMoto)->first();
+		$moto_modelo = $moto->modelo;
+		$moto_id = $moto->id;
+		$hasRole = session('hasRole');
+		$usuario = DB::table('users')->where('users.id', Auth::user()->id)->join('model_has_roles', 'model_id', 'users.id')->first();
+		$usuario_id = $usuario->id;
+		$usuario_nome = $usuario->name;
+		$Users = DB::table('users')->get();
+
+		return Inertia::render("telaCompraMoto", [
+			'hasRole' => $hasRole,
+			'usuario_id' => $usuario_id,
+			'usuario_nome' => $usuario_nome,
+			'Users' => $Users,
+			'moto_modelo' => $moto_modelo,
+			'valor_para_venda' => $moto->valor_para_venda,
+			'categoria' => $usuario->role_id,	
+			'moto_id' => $moto_id,
+		]);
 	}
 
 	public function delete($IDConfigMotos)
@@ -681,9 +928,9 @@ class ConfigMotos extends Controller
 		//MODELO DE FILTRO PARA VOCE COLOCAR AQUI, PARA CADA COLUNA DO BANCO DE DADOS DEVERÁ TER UM IF PARA APLICAR O FILTRO, EXCLUIR O FILTRO DE ID, DELETED E UPDATED_AT
 
 		
-		if (isset($data["ConfigMotos"]["nome"])) {
-			$AplicaFiltro = $data["ConfigMotos"]["nome"];
-			$ConfigMotos = $ConfigMotos->Where("config_motos.nome",  "like", "%" . $AplicaFiltro . "%");
+		if (isset($data["ConfigMotos"]["modelo"])) {
+			$AplicaFiltro = $data["ConfigMotos"]["modelo"];
+			$ConfigMotos = $ConfigMotos->Where("config_motos.modelo",  "like", "%" . $AplicaFiltro . "%");
 		}
 
 		if (isset($data["ConfigMotos"]["marca"])) {
@@ -694,6 +941,16 @@ class ConfigMotos extends Controller
 		if (isset($data["ConfigMotos"]["cor"])) {
 			$AplicaFiltro = $data["ConfigMotos"]["cor"];
 			$ConfigMotos = $ConfigMotos->Where("config_motos.cor",  "like", "%" . $AplicaFiltro . "%");
+		}
+
+		if (isset($data["ConfigMotos"]["placa"])) {
+			$AplicaFiltro = $data["ConfigMotos"]["placa"];
+			$ConfigMotos = $ConfigMotos->Where("config_motos.placa",  "like", "%" . $AplicaFiltro . "%");
+		}
+
+		if (isset($data["ConfigMotos"]["ano"])) {
+			$AplicaFiltro = $data["ConfigMotos"]["ano"];
+			$ConfigMotos = $ConfigMotos->Where("config_motos.ano",  "like", "%" . $AplicaFiltro . "%");
 		}
 
 		if (isset($data["ConfigMotos"]["valor_diaria"])) {
@@ -728,11 +985,14 @@ class ConfigMotos extends Controller
 			}
 			$Dadosconfig_motos[] = [
 				//MODELO DE CA,MPO PARA VOCE COLOCAR AQUI, PARA CADA COLUNA DO BANCO DE DADOS DEVERÁ TER UM, EXCLUIR O ID, DELETED E UPDATED_AT
-				'nome' => $config_motoss->nome,	
+				'modelo' => $config_motoss->modelo,	
 				'marca' => $config_motoss->marca,	
-				'cor' => $config_motoss->cor,							
+				'cor' => $config_motoss->cor,				
+				'placa' => $config_motoss->placa,							
+				'ano' => $config_motoss->ano,							
 				'observacoes' => $config_motoss->observacoes,				
-				'valor_compra' => $config_motoss->valor_compra,				
+				'valor_compra' => $config_motoss->valor_compra,	
+				'valor_para_venda' => $config_motoss->valor_para_venda,				
 				'status' => $config_motoss->status,				
 				'Data de Cadastro' => $config_motoss->created_at,			
 				'valor_diaria' => $config_motoss->valor_diaria,	
@@ -816,9 +1076,9 @@ class ConfigMotos extends Controller
 
 			//MODELO DE FILTRO PARA VOCE COLOCAR AQUI, PARA CADA COLUNA DO BANCO DE DADOS DEVERÁ TER UM IF PARA APLICAR O FILTRO, EXCLUIR O FILTRO DE ID, DELETED E UPDATED_AT
 
-			if (isset($data["ConfigMotos"]["nome"])) {
-				$AplicaFiltro = $data["ConfigMotos"]["nome"];
-				$ConfigMotos = $ConfigMotos->Where("config_motos.nome",  "like", "%" . $AplicaFiltro . "%");
+			if (isset($data["ConfigMotos"]["modelo"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["modelo"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.modelo",  "like", "%" . $AplicaFiltro . "%");
 			}
 
 			if (isset($data["ConfigMotos"]["marca"])) {
@@ -831,6 +1091,16 @@ class ConfigMotos extends Controller
 				$ConfigMotos = $ConfigMotos->Where("config_motos.cor",  "like", "%" . $AplicaFiltro . "%");
 			}
 
+			if (isset($data["ConfigMotos"]["placa"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["placa"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.placa",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["ano"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["ano"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.ano",  "like", "%" . $AplicaFiltro . "%");
+			}
+
 			if (isset($data["ConfigMotos"]["valor_diaria"])) {
 				$AplicaFiltro = $data["ConfigMotos"]["valor_diaria"];
 				$ConfigMotos = $ConfigMotos->Where("config_motos.valor_diaria",  "like", "%" . $AplicaFiltro . "%");
@@ -839,6 +1109,11 @@ class ConfigMotos extends Controller
 			if (isset($data["ConfigMotos"]["valor_compra"])) {
 				$AplicaFiltro = $data["ConfigMotos"]["valor_compra"];
 				$ConfigMotos = $ConfigMotos->Where("config_motos.valor_compra",  "like", "%" . $AplicaFiltro . "%");
+			}
+
+			if (isset($data["ConfigMotos"]["valor_para_venda"])) {
+				$AplicaFiltro = $data["ConfigMotos"]["valor_para_venda"];
+				$ConfigMotos = $ConfigMotos->Where("config_motos.valor_para_venda",  "like", "%" . $AplicaFiltro . "%");
 			}
 
 			if (isset($data["ConfigMotos"]["observacoes"])) {
@@ -901,7 +1176,7 @@ class ConfigMotos extends Controller
 		$dataFinalFormatada = $dataFinal->format('d/m/Y');
 		$aluguel = new AluguelMoto();
 		$aluguel->moto_id = $moto_id;
-		$aluguel->user_id = Auth::user()->id;
+		$aluguel->user_id = $request->usuario_id;
 		$aluguel->inicio_aluguel = $date; 
 		$aluguel->fim_aluguel = $dataFinalFormatada; 
 		$aluguel->valor_total = $valor; 
@@ -929,7 +1204,7 @@ class ConfigMotos extends Controller
 			// Arquivo foi deletado com sucesso
 		}
 
-		$cabecalhoAba1 = array('nome', 'marca', 'cor', 'observacoes', 'valor de compra', 'status', 'Data de Cadastro', 'Valor diaria');
+		$cabecalhoAba1 = array('modelo', 'marca', 'cor', 'placa', 'ano', 'observacoes', 'valor de compra', 'status', 'Data de Cadastro', 'Valor diaria');
 		$spreadsheet = new Spreadsheet();
 		$sheet = $spreadsheet->getActiveSheet();
 

@@ -18,8 +18,8 @@
 
         <div>
           <span class="p-float-label">
-            <InputText v-model="form.nome" id="nome" type="text" class="w-full" required maxlength="50" />
-            <label for="nome" class="text-sm">Nome</label>
+            <InputText v-model="form.modelo" id="modelo" type="text" class="w-full" required maxlength="50" />
+            <label for="modelo" class="text-sm">Modelo</label>
           </span>
         </div>
      
@@ -27,6 +27,20 @@
           <span class="p-float-label">
             <InputText v-model="form.marca" id="marca" type="text" class="w-full" required maxlength="50" />
             <label for="marca" class="text-sm">Marca</label>
+          </span>
+        </div>
+
+        <div>
+          <span class="p-float-label">
+            <InputText v-model="form.placa" id="placa" type="text" maxlength="7" class="w-full" required />
+            <label for="placa" class="text-sm">Placa</label>
+          </span>
+        </div>
+
+        <div>
+          <span class="p-float-label">
+            <InputText v-model="form.ano" id="ano" type="text" maxlength="4" class="w-full" required />
+            <label for="ano" class="text-sm">Ano</label>
           </span>
         </div>
 
@@ -48,6 +62,13 @@
           <span class="p-float-label">
             <InputText v-model="form.valor_compra" id="valor_compra" type="text" class="w-full" required maxlength="50" />
             <label for="valor_compra" class="text-sm">Valor da compra</label>
+          </span>
+        </div>
+
+        <div>
+          <span class="p-float-label">
+            <InputText v-model="form.valor_para_venda" id="valor_para_venda" type="text" class="w-full" required maxlength="50" />
+            <label for="valor_para_venda" class="text-sm">Valor para venda</label>
           </span>
         </div>
 
@@ -136,12 +157,15 @@ const submited = ref(false);
 
 const form = useForm({
 
-  nome: "",
+  modelo: "",
   marca: "",
   cor: "",
+  placa: "",
+  ano: "",
   valor_diaria: "",
   anexo: "",
   valor_compra: "",
+  valor_para_venda: "",
   observacoes: "",
   status: "",
   created_at: "",

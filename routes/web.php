@@ -157,7 +157,11 @@ Route::get('ConfigCarros', [ConfigCarros::class, 'index'])->name('list.ConfigCar
     Route::get('aluguelCarros', [ConfigCarros::class, 'aluguelCarros'])->name('list.aluguelCarros');
     Route::get('telaAluguelCarros/{id}', [ConfigCarros::class, 'telaAluguel'])->name('telaAluguelCarros');
     Route::post('alugandoCarro/{id}', [ConfigCarros::class, 'alugando'])->name('alugandoCarro');
-
+    Route::get('vendaCarros', [ConfigCarros::class, 'vendaCarros'])->name('list.vendaCarros');
+    Route::post('comprandoCarro/{id}', [ConfigCarros::class, 'comprandoCarro'])->name('comprandoCarro');
+    Route::get('telaCompraCarro/{id}', [ConfigCarros::class, 'telaCompraCarro'])->name('telaCompraCarro');
+    Route::post('compradoCarros', [ConfigCarros::class, 'compradoCarros'])->name('compradoCarros');
+    
     Route::get('ConfigMotos', [ConfigMotos::class, 'index'])->name('list.ConfigMotos');
 	Route::post('ConfigMotos', [ConfigMotos::class, 'index'])->name('listP.ConfigMotos');
     Route::get('ConfigMotos/criar', [ConfigMotos::class, 'create'])->name('form.store.ConfigMotos');
@@ -173,6 +177,11 @@ Route::get('ConfigCarros', [ConfigCarros::class, 'index'])->name('list.ConfigCar
 	Route::post('ConfigMotos/deletarTodos', [ConfigMotos::class, 'deletarTodos'])->name('deletarTodos.ConfigMotos');
 	Route::post('ConfigMotos/RestaurarTodos', [ConfigMotos::class, 'RestaurarTodos'])->name('RestaurarTodos.ConfigMotos');
 	Route::get('ConfigMotos/RelatorioExcel', [ConfigMotos::class, 'exportarRelatorioExcel'])->name('get.Excel.ConfigMotos');
+    Route::get('vendaMotos', [ConfigMotos::class, 'vendaMotos'])->name('list.vendaMotos');
+    Route::post('comprando/{id}', [ConfigMotos::class, 'comprando'])->name('comprando');
+    Route::get('telaCompraMoto/{id}', [ConfigMotos::class, 'telaCompraMoto'])->name('telaCompraMoto');
+    Route::post('compradoMotos', [ConfigMotos::class, 'compradoMotos'])->name('compradoMotos');
+
 
 // #ModificaAqui
 

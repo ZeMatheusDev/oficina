@@ -181,13 +181,13 @@
           <div>
             <span class="p-float-label">
               <InputText
-                v-model="form2.nome"
-                id="nome"
+                v-model="form2.modelo"
+                id="modelo"
                 type="text"
                 class="w-full"
                 required
               />
-              <label for="nome" class="text-sm">Nome</label>
+              <label for="modelo" class="text-sm">Modelo</label>
             </span>
           </div>
           <div>
@@ -211,13 +211,13 @@
           <div>
             <span class="p-float-label">
               <InputText
-                v-model="form2.modelo"
-                id="modelo"
+                v-model="form2.marca"
+                id="marca"
                 type="text"
                 class="w-full"
                 required
               />
-              <label for="modelo" class="text-sm">Modelo</label>
+              <label for="marca" class="text-sm">Marca</label>
             </span>
           </div>
           <div>
@@ -351,9 +351,9 @@
             <Checkbox
               @change="toggleColumns"
               :binary="true"
-              v-model="formColumns['columns']['nome']"
+              v-model="formColumns['columns']['modelo']"
             />
-            <span>Nome</span>
+            <span>Modelo</span>
           </div>
           <div class="flex items-center space-x-2">
             <Checkbox
@@ -375,9 +375,9 @@
             <Checkbox
               @change="toggleColumns"
               :binary="true"
-              v-model="formColumns['columns']['modelo']"
+              v-model="formColumns['columns']['marca']"
             />
-            <span>Modelo</span>
+            <span>Marca</span>
           </div>
           <div class="flex items-center space-x-2">
             <Checkbox
@@ -475,20 +475,20 @@
                 </th>
 
                 <th
-                  v-if="formColumns.columns.nome"
+                  v-if="formColumns.columns.modelo"
                   scope="col"
                   class="px-4 text-sm cursor-pointer text-center border-r group"
                   @click="
                     orderBy = {
-                      column: 'nome',
-                      sorting: sortTable(sortVal.nome)
-                        ? (sortVal.nome = 1)
-                        : (sortVal.nome = 0),
+                      column: 'modelo',
+                      sorting: sortTable(sortVal.modelo)
+                        ? (sortVal.modelo = 1)
+                        : (sortVal.modelo = 0),
                     }
                   "
                 >
                   <div class="flex">
-                    <span class="group-hover:text-indigo-800">Nome</span>
+                    <span class="group-hover:text-indigo-800">Modelo</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-5 w-5 ml-auto group-hover:text-indigo-800"
@@ -568,20 +568,20 @@
                   </div>
                 </th>
                 <th
-                  v-if="formColumns.columns.modelo"
+                  v-if="formColumns.columns.marca"
                   scope="col"
                   class="px-4 text-sm cursor-pointer text-center border-r group"
                   @click="
                     orderBy = {
-                      column: 'modelo',
-                      sorting: sortTable(sortVal.modelo)
-                        ? (sortVal.modelo = 1)
-                        : (sortVal.modelo = 0),
+                      column: 'marca',
+                      sorting: sortTable(sortVal.marca)
+                        ? (sortVal.marca = 1)
+                        : (sortVal.marca = 0),
                     }
                   "
                 >
                   <div class="flex">
-                    <span class="group-hover:text-indigo-800">Modelo</span>
+                    <span class="group-hover:text-indigo-800">Marca</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-5 w-5 ml-auto group-hover:text-indigo-800"
@@ -852,12 +852,12 @@
                 </td>
 
                 <td
-                  v-if="formColumns?.columns?.nome"
+                  v-if="formColumns?.columns?.modelo"
                   class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
                 >
                   <div class="flex items-center">
                     <div>
-                      <div class="font-medium text-gray-900">{{ data?.nome }}</div>
+                      <div class="font-medium text-gray-900">{{ data?.modelo }}</div>
                     </div>
                   </div>
                 </td>
@@ -882,12 +882,12 @@
                   </div>
                 </td>
                 <td
-                  v-if="formColumns?.columns?.modelo"
+                  v-if="formColumns?.columns?.marca"
                   class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
                 >
                   <div class="flex items-center">
                     <div>
-                      <div class="font-medium text-gray-900">{{ data?.modelo }}</div>
+                      <div class="font-medium text-gray-900">{{ data?.marca }}</div>
                     </div>
                   </div>
                 </td>
@@ -1061,10 +1061,10 @@ const statusOption = [
 ];
 
 const sortVal = {
-  nome: 1,
+  modelo: 1,
   placa: 1,
   valor_diaria: 1,
-  modelo: 1,
+  marca: 1,
   ano: 1,
   cor: 1,
   valor_compra: 1,
@@ -1077,10 +1077,10 @@ const sortVal = {
 const formColumns = useForm({
   route_of_list: "list.ConfigCarros",
   columns: {
-    nome: validateColumnsVisibility("nome"),
+    modelo: validateColumnsVisibility("modelo"),
     placa: validateColumnsVisibility("placa"),
     valor_diaria: validateColumnsVisibility("valor_diaria"),
-    modelo: validateColumnsVisibility("modelo"),
+    marca: validateColumnsVisibility("marca"),
     ano: validateColumnsVisibility("ano"),
     cor: validateColumnsVisibility("cor"),
     valor_compra: validateColumnsVisibility("valor_compra"),
@@ -1092,10 +1092,10 @@ const formColumns = useForm({
 });
 
 const form2 = useForm({
-  nome: props.Filtros?.nome || null,
+  modelo: props.Filtros?.modelo || null,
   placa: props.Filtros?.placa || null,
   valor_diaria: props.Filtros?.valor_diaria || null,
-  modelo: props.Filtros?.modelo || null,
+  marca: props.Filtros?.marca || null,
   ano: props.Filtros?.ano || null,
   cor: props.Filtros?.cor || null,
   valor_compra: props.Filtros?.valor_compra || null,

@@ -15,26 +15,34 @@
   
 		<div class="mt-10 grid grid-cols-1 gap-6 max-md:grid-cols-1">
   
-		<div>
+      <div class="form-group" v-if="form.categoria == 8">
+    <span class="p-float-label">
+      <InputText v-model="form.usuario_id" :value="form.nome" :readonly="verificarCondicao()" id="nome" type="text" class="w-full" required maxlength="50" />
+      <label for="nome" class="text-sm">Contratante:</label>
+    </span>
+  </div>
+
+		<div class="form-group" v-if="form.categoria != 8">
           <span class="p-float-label">
-            <InputText v-model="form.nome" readonly id="nome" type="text" class="w-full" required maxlength="50" />
-            <label for="nome" class="text-sm">Contratante:</label>
+            <Dropdown class="w-full" v-model="form.usuario_id" :value="form.nome" :options="Users" optionLabel="name" dataKey="value"
+              required />
+            <label for="status" class="text-sm">Contratante:</label>
           </span>
         </div>
-		
-		  <div>
+  
+		<div>
 			<span class="p-float-label">
 			  <InputText v-model="form.modelo" readonly id="modelo" type="text" class="w-full" required maxlength="50" />
 			  <label for="modelo" class="text-sm">Modelo da moto</label>
 			</span>
 		  </div>
-  
+
 		  <div>
 			<span class="p-float-label">
 				<input type="text" v-model="form.dias" @input="validateDias" maxlength="3" class="w-full" toggleMask autocomplete="off" style="font-family: Arial, Helvetica, sans-serif;" placeholder="Dias alugados" required>
 			</span>
 		  </div>
-  
+
 		  <div>
 			<span class="p-float-label">
 				<Calendar v-model="selectedDate" id="inicio_aluguel" :readonly-input="true" :min-date="minDate" :show-icon="true" :date-format="dateFormat" />
@@ -95,10 +103,12 @@ import Calendar from 'primevue/calendar';
   const props = defineProps({
 	errorBags: Object,
 	moto_id: String,
-	moto_nome: String,
+	moto_modelo: String,
 	valor_diaria : String,
 	usuario_nome: String,
 	usuario_id: String,
+	categoria: String,
+	Users: Object,
   });
   
   const toast = useToast();
@@ -108,7 +118,9 @@ import Calendar from 'primevue/calendar';
   const selectedDate = ref(null);
   const minDate = ref(moment().toDate()); // Use moment.js para obter a data atual
 
-
+  const Users = $propsPage?.value?.Users?.map((val) => {
+	return { name: val.name, value: val.id };
+	});
   
   const currentNav = ref(1);
   
@@ -131,6 +143,7 @@ import Calendar from 'primevue/calendar';
 
 };
 
+
 const multiplicador = () => {
 	let valor = form.dias;
 	form.valor = valorFinal;
@@ -140,13 +153,15 @@ const multiplicador = () => {
   const submited = ref(false);
   
   const form = useForm({
-  
+	usuario_id: props.usuario_id,
 	nome: props.usuario_nome,
-	modelo: props.moto_nome,
+	modelo: props.moto_modelo,
 	moto_id: props.moto_id,
 	valor_diaria: props.valor_diaria,
 	dias: "",
+	categoria: props.categoria,
 	valor: "0",
+	condicao: false,
 	inicio_aluguel: selectedDate,
   
   });
@@ -177,6 +192,17 @@ const multiplicador = () => {
 	}
 	return newForm;
   }
+
+  function verificarCondicao(){
+	if(form.categoria == 8){
+		form.condicao = true;
+	}
+	else{
+		form.condicao = false;
+	}
+	return form.condicao;
+  }
+
   function submit() {
 	validateForm();
 	submited.value = true;
@@ -195,7 +221,7 @@ const multiplicador = () => {
 	  },
 	  onSuccess: () => {
 		form.reset();
-		toast.success("Salvo com sucesso!");
+		toast.success("Aluguel feito com sucesso!");
 	  },
 	  onFinish: () => (submited.value = false),
 	});

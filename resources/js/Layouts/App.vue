@@ -262,6 +262,29 @@
           <span v-show="!toggleTextMenu">Alugar Carro &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         </li>
         </a>
+              <div class="uppercase mt-9 mb-4 text-[10px] font-bold tracking-widest text-gray-400/90">
+          <span v-show="!toggleTextMenu">
+            Compras
+          </span>
+        </div>
+        <a as="button" href="/vendaMotos">
+        <li class="flex text-gray-500/80 font-semibold space-x-3 items-center text-[14px] mt-2 hover:text-proconph">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+          </svg>
+
+          <span v-show="!toggleTextMenu">Comprar Moto &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </li>
+        </a>
+        <a as="button" href="/vendaCarros">
+        <li class="flex text-gray-500/80 font-semibold space-x-3 items-center text-[14px] mt-2 hover:text-proconph">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+          </svg>
+
+          <span v-show="!toggleTextMenu">Comprar Carro &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </li>
+        </a>
         <br><br><br>
         <li class=" mt-4">
           <Link class="flex text-gray-500/80 font-semibold space-x-3 items-center text-[14px] hover:text-red-400" href="/logout" method="post">

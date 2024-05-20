@@ -17,10 +17,12 @@ class ConfigMotoss extends Authenticatable
     protected $table = 'config_motos';
 
     protected $fillable = [
-        'nome',
+        'modelo',
         'marca',
         'empresa',
         'cor',
+        'placa',
+        'ano',
         'alugado',
         'vendido',
         'valor_compra',

@@ -56,14 +56,17 @@ INSERT IGNORE INTO `companies` (`id`, `name`, `nome_fantasia`, `logo_path`, `cnp
 -- Copiando estrutura para tabela projeto_estagio.config_carros
 CREATE TABLE `config_motos` (
     `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    `nome` VARCHAR(255),
+    `modelo` VARCHAR(255),
+  	`placa` varchar(50) DEFAULT NULL,
     `marca` VARCHAR(255),
+  	`ano` varchar(50) DEFAULT NULL,
     `empresa_id` INT UNSIGNED,
     `cor` VARCHAR(255),
     `alugado` TINYINT DEFAULT 0,
     `vendido` TINYINT DEFAULT 0,
     `valor_diaria` VARCHAR(50) DEFAULT NULL,
     `valor_compra` VARCHAR(50) DEFAULT NULL,
+  	`valor_para_venda` VARCHAR(50) DEFAULT NULL,
     `status` VARCHAR(255),
     `token` VARCHAR(255),
     `anexo` TEXT DEFAULT NULL,
@@ -80,6 +83,24 @@ CREATE TABLE `aluguel_motos` (
     `inicio_aluguel` VARCHAR(50),
     `fim_aluguel` VARCHAR(50),
     `valor_total` VARCHAR(50),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `venda_motos` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `moto_id` INT UNSIGNED,
+    `user_id` INT UNSIGNED,
+    `lucro` VARCHAR(50),
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `venda_carros` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `carro_id` INT UNSIGNED,
+    `user_id` INT UNSIGNED,
+    `lucro` VARCHAR(50),
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -119,15 +140,16 @@ CREATE TABLE `historico_aluguel_carros` (
 
 CREATE TABLE IF NOT EXISTS `config_carros` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nome` varchar(500) DEFAULT NULL,
-  `placa` varchar(50) DEFAULT NULL,
   `modelo` varchar(50) DEFAULT NULL,
+  `placa` varchar(50) DEFAULT NULL,
+  `marca` varchar(50) DEFAULT NULL,
   `ano` varchar(50) DEFAULT NULL,
   `cor` varchar(50) DEFAULT NULL,
   `alugado` TINYINT DEFAULT 0,
   `vendido` TINYINT DEFAULT 0,
   `valor_diaria` VARCHAR(50) DEFAULT NULL,
   `valor_compra` VARCHAR(50) DEFAULT NULL,
+  `valor_para_venda` VARCHAR(50) DEFAULT NULL,
   `anexo` text DEFAULT NULL,
   `observacao` text DEFAULT NULL,
   `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '0',
