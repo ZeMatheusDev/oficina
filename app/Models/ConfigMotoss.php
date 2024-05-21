@@ -19,7 +19,7 @@ class ConfigMotoss extends Authenticatable
     protected $fillable = [
         'modelo',
         'marca',
-        'empresa',
+        'empresa_id',
         'cor',
         'placa',
         'ano',

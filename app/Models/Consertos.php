@@ -23,6 +23,7 @@ class Consertos extends Authenticatable
         'valor_cobrado',
         'veiculo',
         'placa',
+        'empresa_id',
         'usuario_id',
         'data_finalizacao',
     ];

@@ -73,11 +73,13 @@ class Userlist extends Controller
             ->appends(['page', 'orderBy', 'searchBy', 'limit']);
 
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+			$empresaSelecionada = session()->all()['empresa_nome'];
         
 
         return Inertia::render('User/List', [
             'columnsTable' => $columnsTable,
             'users' => $users,
+			"empresaSelecionada" => $empresaSelecionada,
             "Filtros" => $data["users"],
             "hasRole" => $usuario != null,
         ]);
@@ -99,11 +101,13 @@ class Userlist extends Controller
 
         $companies = DB::table("companies")->where('deleted','0')->where('status','1')->get();
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+			$empresaSelecionada = session()->all()['empresa_nome'];
 
 
         return Inertia::render('User/Create', [
             'roles' => $roles,
             'Empresa' => $companies,
+            'empresaSelecionada' => $empresaSelecionada,
             "hasRole" => $usuario != null,
         ]);
     }
@@ -215,11 +219,14 @@ class Userlist extends Controller
         $EmpresaFinal = substr($EmpresaFinal,0,-1);
 
         $user1->load(['permissions', 'roles']);
+			$empresaSelecionada = session()->all()['empresa_nome'];
+
 
         return Inertia::render('User/Edit', [
             'roles' => $roles,
             'user1' => $user1,
             "hasRole" => $usuario != null,
+            "empresaSelecionada" => $empresaSelecionada,
             'Empresa' => $companies,
             'ExplodeEmpresa' => $EmpresaFinal,
         ]);
@@ -257,11 +264,13 @@ class Userlist extends Controller
             }
         }
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
-    
+			$empresaSelecionada = session()->all()['empresa_nome'];
+
 
         return Inertia::render('User/Profile', [
             'roles' => $roles,
             'user' => $user,
+			"empresaSelecionada" => $empresaSelecionada,
             'Empresa' => $companies,
             "hasRole" => $usuario != null,
             'SelectEmpresa' => $arr,

@@ -23,6 +23,7 @@ class ConfigCarross extends Authenticatable
         'cor',
         'alugado',
         'vendido',
+        'empresa_id',
         'valor_compra',
         'valor_diaria',
         'status',

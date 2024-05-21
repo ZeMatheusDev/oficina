@@ -14,6 +14,8 @@
           </svg>
         </button>
        
+        <div style="display: flex; align-items: center; margin-left: 1000px;">Empresa selecionada: {{ $props?.empresaSelecionada }}</div>
+
         <div class="flex ml-auto items-center">
           <div class="flex flex-col mr-3">
             
@@ -543,6 +545,7 @@ const dropdownAuditConf = ref(false);
 const props = defineProps({
   Usuario: Object,
   hasRole: Boolean,
+  empresaSelecionada: String,
 })
 const dropdownReports = ref(false);
 const dropdownReportsConf = ref(false);

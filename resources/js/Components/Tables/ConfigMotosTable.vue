@@ -268,8 +268,8 @@
 					</div>
 					
 					<div class="flex items-center space-x-2">
-						<Checkbox @change="toggleColumns" :binary="true" v-model="formColumns['columns']['created_at']" />
-						<span>Data De Cadastro</span>
+						<Checkbox @change="toggleColumns" :binary="true" v-model="formColumns['columns']['empresa_nome']" />
+						<span>Empresa da moto</span>
 					</div>
 				</div>
 			</div>
@@ -462,11 +462,11 @@
 										</svg>
 									</div>
 								</th>
-								<th v-if="formColumns.columns.created_at" scope="col"
+								<th v-if="formColumns.columns.empresa_nome" scope="col"
 									class="px-4 text-sm cursor-pointer text-center border-r group"
-									@click="orderBy = { column: 'created_at', sorting: sortTable(sortVal.created_at) ? sortVal.created_at = 1 : sortVal.created_at = 0 }">
+									@click="orderBy = { column: 'empresa_nome', sorting: sortTable(sortVal.empresa_nome) ? sortVal.empresa_nome = 1 : sortVal.empresa_nome = 0 }">
 									<div class="flex">
-										<span class="group-hover:text-indigo-800">Data De Cadastro</span>
+										<span class="group-hover:text-indigo-800">Nome da empresa da moto</span>
 										<svg xmlns="http://www.w3.org/2000/svg"
 											class="h-5 w-5 ml-auto group-hover:text-indigo-800" fill="none"
 											viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -607,11 +607,11 @@
 										v-if="data?.status == '1'">Inativo</span>
 								</td>
 								
-								<td v-if="formColumns?.columns?.created_at"
+								<td v-if="formColumns?.columns?.empresa_nome"
 									class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
 									<div class="flex items-center">
 										<div>
-											<div class="font-medium text-gray-900">{{ data?.data_final }}</div>
+											<div class="font-medium text-gray-900">{{ data?.empresa_nome }}</div>
 										</div>
 									</div>
 								</td>
@@ -714,7 +714,7 @@ const sortVal = {
 	vendido: 1,
 	observacoes: 1,
 	status: 1,
-	created_at: 1,
+	empresa_nome: 1,
 };
 
 const formColumns = useForm({
@@ -733,7 +733,7 @@ const formColumns = useForm({
 		vendido: validateColumnsVisibility("vendido"),
 		observacoes: validateColumnsVisibility("observacoes"),
 		status: validateColumnsVisibility("status"),
-		created_at: validateColumnsVisibility("created_at"),
+		empresa_nome: validateColumnsVisibility("empresa_nome"),
 	},
 });
 
@@ -751,7 +751,7 @@ const form2 = useForm({
 	vendido: props.Filtros?.vendido || null,
 	observacoes: props.Filtros?.observacoes || null,
 	status: {value: props.Filtros?.status || null},
-	created_at: props.Filtros?.created_at || null,
+	empresa_nome: props.Filtros?.empresa_nome || null,
 	limparFiltros: '',
 });
 

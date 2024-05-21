@@ -8,6 +8,7 @@
 				<img class="w-full h-full overflow-hidden object-cover rounded" :src="$page.props.user?.profile_picture" onerror="this.src='/images/profile_default.png';" alt="" />
 			</div>
 		</div>
+
 		<div class="px-5 xl:px-10 pb-10">
 			<div class="flex justify-center xl:justify-end w-full pt-16 xl:pt-5">
 				<div class="flex items-center">
@@ -45,31 +46,17 @@
 				</div>
 
 				<div class="xl:px-10 xl:border-l xl:border-r w-full py-5 flex items-start justify-center xl:w-1/3">
-					<div class="mr-6 xl:mr-10">
-					
-						<h2 class="text-gray-600 dark:text-gray-400 font-bold text-xl xl:text-2xl leading-6 mb-2 text-center">14</h2>
-						<p class="text-gray-800  text-sm xl:text-xl leading-5">Dados 1</p>
-					
-					</div>
-					<div class="mr-6 xl:mr-10">
-					
-						<h2 class="text-gray-600 dark:text-gray-400 font-bold text-xl xl:text-2xl leading-6 mb-2 text-center">23</h2>
-						<p class="text-gray-800  text-sm xl:text-xl leading-5">Dados 2</p>
-						
-					</div>
-					<div>
-						
-						<h2 class="text-gray-600 dark:text-gray-400 font-bold text-xl xl:text-2xl leading-6 mb-2 text-center">87</h2>
-						<p class="text-gray-800  text-sm xl:text-xl leading-5">Dados 3</p>
-						
-					</div>
+					<label for="status" class="text-sm">Selecione sua filial de preferencia:</label>
+
+					<span class="p-float-label">
+					<Dropdown class="w-full" v-model="form.empresa_id" :value="form.empresa_nome" :options="Empresas" @change="trocouEmpresa()" optionLabel="name" dataKey="value"
+						required />
+					</span>
 				</div>
 				<div class="w-full xl:w-2/3 flex-col md:flex-row justify-center xl:justify-end flex md:pl-6">
-					<div class="flex items-center justify-center xl:justify-start mt-1 md:mt-0 mb-5 md:mb-0">
-						<div class="rounded-full bg-red-400 text-white-600 text-sm px-6 py-2 flex justify-center items-center" style="color:white">Botão 1</div>
-						<div class="ml-5 rounded-full bg-green-200 text-green-500 text-sm px-6 py-2 flex justify-center items-center" style="color:black">Botão 2</div>
-					</div>
-						<button class="rounded-full focus:outline-none ml-0 md:ml-5 bg-indigo-700 dark:bg-indigo-600 transition duration-150 ease-in-out hover:bg-indigo-600 rounded text-white px-3 md:px-6 py-2 text-sm">Botão 3</button>
+					Empresa mais proxima: {{ form.empresaMaisProxima }}
+					<br>
+					Empresa selecionada: {{ form.empresaSelecionada }}
 				</div>
 			</div>
 		</div>
@@ -254,6 +241,8 @@ import { Inertia } from "@inertiajs/inertia";
 import { useForm } from "@inertiajs/inertia-vue3";  
 import { useToast } from "vue-toastification";
 import ModalDelete from "@/Components/Modals/Delete";
+import { onMounted } from 'vue';
+
 const _ = require("lodash");
 
 const props = defineProps({
@@ -262,6 +251,9 @@ ContasAVencer: Object,
 Registros: Object,
 OrdemdeServico: Object,
 AlertaError: Object,
+Empresas: Object,
+empresaMaisProxima: String,
+empresaSelecionada: String,
 });
 
 const showDeleteModal = ref({
@@ -275,6 +267,10 @@ const searchBy = ref(getParams("searchBy") || "0");
 const searchBy2 = ref(getParams("searchBy2") || "0"); 
 const statusValue = ref(getParams("byStatus"));
 
+const Empresas = $propsPage?.value?.Empresas?.map((val) => {
+	return { name: val.name, value: val.id };
+	});
+
 const status = [
 { label: "Ativo", code: '0' },
 { label: "Inativo", code: '1' },
@@ -287,6 +283,14 @@ const toast = useToast();
 const InputsRequired = { empresa_vinculada: "",id_fixo: "",id_ordem_servico: "",data_prevista: "",data_realizada: "",tipo: "",valor: "",obs: "",created_at: "", };
 
 const form = useForm({
+
+empresa_id: "",
+
+empresaMaisProxima: props.empresaMaisProxima,
+
+empresaSelecionada: props.empresaSelecionada,
+
+empresa_nome: "",
 
 empresa_vinculada: "",
 
@@ -305,6 +309,8 @@ valor: "",
 obs: "",
 
 created_at: "",
+
+atualizado: false,
 
 });
 
@@ -353,6 +359,59 @@ return true;
 }
 ExibiAlertas();
 
+const getLocation = () => {
+  return new Promise((resolve, reject) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+        },
+        error => {
+          reject(error);
+        }
+      );
+    } else {
+      reject(new Error("Geolocalização não é suportada por este navegador."));
+    }
+  });
+};
+
+const obterLocalizacao = async () => {
+    if (!form.atualizado) {
+		let location = await getLocation();
+        axios.get(`/atualizarLoc/${location.latitude}/${location.longitude}`)
+            .then(response => {
+                // Lógica para lidar com a resposta, se necessário
+                console.log('Localização atualizada com sucesso:', response);
+                form.atualizado = true;
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar localização:', error);
+            });
+    }
+};
+
+// Chamando a função para obter a localização quando a página é montada
+onMounted(() => {
+    obterLocalizacao();
+});
+
+const trocouEmpresa = async () => {
+	let empresa_id = form.empresa_id.value;
+	axios.get(`/atualizarEmpresa/${empresa_id}`)
+		.then(response => {
+			form.empresaSelecionada = response.data;
+			window.location.reload();
+
+		})
+		.catch(error => {
+			console.error('Erro ao atualizar empresa:', error);
+		});
+    
+};
 
 function toggleColumns() {
 formColumns.post(route("toggle.columns.tables"), {

@@ -42,6 +42,8 @@ class Login extends Controller
             'password.required' => 'O campo email é obrigatório',
         ]);
 
+          
+
         $credentials = $request->only('email', 'password');
 
         $user = DB::table("users")
@@ -52,10 +54,14 @@ class Login extends Controller
         if (!$user) {
             return redirect("login")->withErrors('Usuário não localizado.');
         }
+        $user_id = DB::table("users")
+        ->where("email", $credentials['email'])
+        ->where('status', '1')
+        ->first();
 
         $this->user = $user;
         
-        $this->setSessionData();
+        $this->setSessionData($user_id);
         if (Auth::attempt($credentials)) {
             return redirect()->route('home');
         }
@@ -77,6 +83,8 @@ class Login extends Controller
             $user->profile_picture = '';
             $user->status = 1;
             $user->is_master = 0;
+            $user->longitude = $request->localizacao['longitude'];
+            $user->latitude = $request->localizacao['latitude'];
             $user->phone = $request->numero;
             $user->password =  Hash::make($request->password);
             $user->created_at =  now();
@@ -99,16 +107,35 @@ class Login extends Controller
 
     }
 
-    public function setSessionData()
+    public function setSessionData($user_id)
     {				
         $MinhasEmpresas = explode(',',$this->user->empresa);
         $EmpresaFinal = '';
         $Empresa = DB::table("companies")->where('deleted','0')->where('status','1')->whereIn("id",$MinhasEmpresas)->get();
+
         foreach($Empresa as $valid){
             $EmpresaFinal .= $valid->id.',';
         }
         $EmpresaFinal = substr($EmpresaFinal,0,-1);
-        session(['empresa' => $EmpresaFinal]);
+        $empresas = DB::table('companies')->get();
+        $distanciaMinima = PHP_FLOAT_MAX; 
+        $empresaMaisProxima = null;
+        $coordenadasUsuario = DB::table('users')->where('id', $user_id->id)->first();
+        $latitudeUsuario = $coordenadasUsuario->latitude;
+        $longitudeUsuario = $coordenadasUsuario->longitude;
+
+        foreach($empresas as $empresa){
+            foreach($empresas as $empresa) {
+                $Dashboard = new Dashboard();
+                $distancia = $Dashboard->calcularDistancia($latitudeUsuario, $longitudeUsuario, $empresa->latitude, $empresa->longitude);
+                if ($distancia < $distanciaMinima) {
+                    $distanciaMinima = $distancia;
+                    $empresaMaisProxima = $empresa;
+                }
+            }
+        }
+        session(['empresa' => $empresaMaisProxima->id]);
+        session(['empresa_nome' => $empresaMaisProxima->name]);
     }
 
     public function logout()

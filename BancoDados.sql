@@ -17,7 +17,6 @@
 CREATE DATABASE IF NOT EXISTS `projeto_estagio` /*!40100 DEFAULT CHARACTER SET utf8mb3 */;
 USE `projeto_estagio`;
 
--- Copiando estrutura para tabela projeto_estagio.companies
 CREATE TABLE IF NOT EXISTS `companies` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -39,6 +38,8 @@ CREATE TABLE IF NOT EXISTS `companies` (
   `bairro` varchar(500) CHARACTER SET latin1 DEFAULT NULL,
   `cidade` varchar(500) CHARACTER SET latin1 DEFAULT NULL,
   `estado` varchar(500) CHARACTER SET latin1 DEFAULT NULL,
+  `longitude` VARCHAR(255) DEFAULT NULL,
+  `latitude` VARCHAR(255) DEFAULT NULL,
   `status` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '1',
   `token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `deleted` int(11) DEFAULT 0,
@@ -47,11 +48,14 @@ CREATE TABLE IF NOT EXISTS `companies` (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Copiando dados para a tabela projeto_estagio.companies: ~1 rows (aproximadamente)
-/*!40000 ALTER TABLE `companies` DISABLE KEYS */;
-INSERT IGNORE INTO `companies` (`id`, `name`, `nome_fantasia`, `logo_path`, `cnpj`, `quality_responsable`, `insc_estadual`, `insc_municipal`, `icms_situacao_tributaria`, `pis_situacao_tributaria`, `cofins_situacao_tributaria`, `icms_origem`, `token_api`, `cep`, `logradouro`, `complemento`, `numero`, `bairro`, `cidade`, `estado`, `status`, `token`, `deleted`, `created_at`, `updated_at`) VALUES
-	(1, 'Empresa Teste1', 'Nome Fantasia', NULL, '00000000', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', '111', 0, '2023-08-17 10:54:29', '2023-08-17 10:55:06');
-/*!40000 ALTER TABLE `companies` ENABLE KEYS */;
+-- Inserindo dados com longitude e latitude para algumas cidades
+INSERT INTO `companies` (`name`, `nome_fantasia`, `cidade`, `estado`, `longitude`, `latitude`)
+VALUES
+    ('Empresa São Paulo', 'Nome Fantasia SP', 'São Paulo', 'São Paulo', '-46.6333', '-23.5505'),
+    ('Empresa Rio de Janeiro', 'Nome Fantasia RJ', 'Rio de Janeiro', 'Rio de Janeiro', '-43.1729', '-22.9068'),
+    ('Empresa Santa Catarina', 'Nome Fantasia SC', 'Florianópolis', 'Santa Catarina', '-48.6126', '-27.5954'),
+    ('Empresa Maceió', 'Nome Fantasia AL', 'Maceió', 'Alagoas', '-35.7350', '-9.6662'),
+    ('Empresa Recife', 'Nome Fantasia PE', 'Recife', 'Pernambuco', '-34.8811', '-8.0476');
 
 -- Copiando estrutura para tabela projeto_estagio.config_carros
 CREATE TABLE `config_motos` (
@@ -144,6 +148,7 @@ CREATE TABLE IF NOT EXISTS `config_carros` (
   `placa` varchar(50) DEFAULT NULL,
   `marca` varchar(50) DEFAULT NULL,
   `ano` varchar(50) DEFAULT NULL,
+  `empresa_id` INT UNSIGNED,
   `cor` varchar(50) DEFAULT NULL,
   `alugado` TINYINT DEFAULT 0,
   `vendido` TINYINT DEFAULT 0,
@@ -363,6 +368,7 @@ CREATE TABLE consertos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     problema VARCHAR(100),
     valor_cobrado VARCHAR(100),
+	empresa_id INT UNSIGNED,
     veiculo VARCHAR(100),
     placa VARCHAR(100),
     usuario_id bigint(20) unsigned NOT NULL,
@@ -864,7 +870,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `status` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `is_master` int(11) NOT NULL DEFAULT 0,
   `phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `localizacao` point DEFAULT NULL,
+  `longitude` VARCHAR(255) DEFAULT NULL,
+  `latitude` VARCHAR(255) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL,
   `temp_password` int(11) DEFAULT 0 COMMENT '// Se o usuário estiver com a senha temporária, essa coluna possui um valor falso em binário. 0',
@@ -874,8 +881,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 -- Copiando dados para a tabela projeto_estagio.users: ~1 rows (aproximadamente)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT IGNORE INTO `users` (`id`, `empresa`, `name`, `email`, `email_verified_at`, `password`, `two_factor_secret`, `two_factor_recovery_codes`, `two_factor_confirmed_at`, `remember_token`, `profile_picture`, `status`, `is_master`, `phone`, `created_at`, `updated_at`, `temp_password`) VALUES
-	(17, '1', 'Admin', 'admin@admin.com', NULL, '$2y$10$PMuKiWwtzcQ5CINNACf6NOu3psD43DJ6QXtxI7n7LRUg8v/tir3me', NULL, NULL, NULL, NULL, 'avatars/1/IaU2aKSD1ubDyf2v4HgptO3fm39662Mpgk5M2WPS.jpg', '1', 0, '(71) 99105-2564', '2022-11-08 15:07:37', '2023-01-07 19:40:40', 0);
+INSERT IGNORE INTO `users` (`id`, `empresa`, `name`, `email`, `email_verified_at`, `password`, `two_factor_secret`, `two_factor_recovery_codes`, `two_factor_confirmed_at`, `remember_token`, `profile_picture`, `status`, `is_master`, `phone`, `latitude`, `longitude`, `created_at`, `updated_at`, `temp_password`) VALUES
+    (17, '1', 'Admin', 'admin@admin.com', NULL, '$2y$10$PMuKiWwtzcQ5CINNACf6NOu3psD43DJ6QXtxI7n7LRUg8v/tir3me', NULL, NULL, NULL, NULL, 'avatars/1/IaU2aKSD1ubDyf2v4HgptO3fm39662Mpgk5M2WPS.jpg', '1', 0, '(71) 99105-2564', null, null, '2022-11-08 15:07:37', '2023-01-07 19:40:40', 0);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela projeto_estagio.util_cidades

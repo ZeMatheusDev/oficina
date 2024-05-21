@@ -21,9 +21,12 @@ class Permissions extends Controller
         
         $usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
         $roles = Role::paginate(10);
+        $empresaSelecionada = session()->all()['empresa_nome'];
+
 
         return Inertia::render('Permission/List')
             ->with([
+				"empresaSelecionada" => $empresaSelecionada,
                 "hasRole" => $usuario != null,
                 'roles' => $roles,
             ]);
@@ -39,11 +42,14 @@ class Permissions extends Controller
         }
         $usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 
+        $empresaSelecionada = session()->all()['empresa_nome'];
 
         $roles = Role::all();
         return Inertia::render('Permission/Create')
             ->with([
                 'roles' => $roles,
+				"empresaSelecionada" => $empresaSelecionada,
+
                 "hasRole" => $usuario != null,
 
             ]);
@@ -79,10 +85,12 @@ class Permissions extends Controller
 
         $role = Role::findOrFail($roleId);
         $role->load(['permissions']);
+        $empresaSelecionada = session()->all()['empresa_nome'];
 
         return Inertia::render('Permission/Edit')
             ->with([
                 'role' => $role,
+				"empresaSelecionada" => $empresaSelecionada,
                 "hasRole" => $usuario != null,
             ]);
     }

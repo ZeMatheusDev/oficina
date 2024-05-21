@@ -199,6 +199,8 @@ Route::get('ConfigCarros', [ConfigCarros::class, 'index'])->name('list.ConfigCar
    
     Route::get('Dashboard/Calendario', [Dashboard::class, 'Calendario'])->name('list.DashboardCalendario');
     Route::get('Dashboard/{id?}', [Dashboard::class, 'index'])->name('list.Dashboard');
+    Route::get('atualizarLoc/{latitude}/{longitude}', [Dashboard::class, 'atualizarLoc'])->name('atualizarLoc');
+    Route::get('atualizarEmpresa/{empresa_id}', [Dashboard::class, 'atualizarEmpresa'])->name('atualizarEmpresa');
 
 
     Route::get('cep/{cep}', [Utils::class, 'getAddressViaCep'])->name('get.address.viacep');

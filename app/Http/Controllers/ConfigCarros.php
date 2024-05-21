@@ -139,7 +139,7 @@ if(isset($data["ConfigCarros"]["created_at"])){
 					$ConfigCarros = $ConfigCarros->Where("config_carros.created_at",  "like", "%" . $AplicaFiltro . "%");			
 				}
 	
-			$ConfigCarros = $ConfigCarros->where("config_carros.deleted", "0");
+			$ConfigCarros = $ConfigCarros->where("config_carros.deleted", "0")->join('companies', 'config_carros.empresa_id', '=', 'companies.id')->select('companies.name as empresa_nome', 'companies.cidade as cidade', 'config_carros.*');
 	
 			$ConfigCarros = $ConfigCarros->paginate(($data["ConfigCarros"]["limit"] ?: 10))
 				->appends(["page", "orderBy", "searchBy", "limit"]);
@@ -149,11 +149,12 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
 			$Registros = $this->Registros();
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
-
+			$empresaSelecionada = session()->all()['empresa_nome'];
 			return Inertia::render("ConfigCarros/List", [
 				"columnsTable" => $columnsTable,
 				"ConfigCarros" => $ConfigCarros,
 				"hasRole" => $usuario != null,
+				"empresaSelecionada" => $empresaSelecionada,
 				"Filtros" => $data["ConfigCarros"],
 				"Registros" => $Registros,
 
@@ -186,10 +187,13 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$usuario_id = $usuario->id;
 			$usuario_nome = $usuario->name;
 			$Users = DB::table('users')->get();
+			$empresaSelecionada = session()->all()['empresa_nome'];
+
 
 			return Inertia::render("telaCompraCarro", [
 				'hasRole' => $hasRole,
 				'usuario_id' => $usuario_id,
+				'empresaSelecionada' => $empresaSelecionada,
 				'usuario_nome' => $usuario_nome,
 				'Users' => $Users,
 				'carro_modelo' => $carro_modelo,
@@ -230,7 +234,8 @@ if(isset($data["ConfigCarros"]["created_at"])){
 				->join('users', 'aluguel_carros.user_id', '=', 'users.id')
 				->join('config_carros', 'aluguel_carros.carro_id', '=', 'config_carros.id')
 				->where('aluguel_carros.user_id', $usuario_id)
-				->select('aluguel_carros.*', 'users.name as user_name', 'config_carros.modelo as modelo', 'config_carros.placa as placa', 'carro_id AS veiculo_id')
+				->where('config_carros.empresa_id', session()->all()['empresa'])
+				->select('aluguel_carros.*', 'users.name as user_name', 'config_carros.modelo as modelo', 'config_carros.empresa_id', 'config_carros.placa as placa', 'carro_id AS veiculo_id')
 				->addSelect(DB::raw("'carro' AS veiculo"))
 				->get();
 
@@ -238,7 +243,8 @@ if(isset($data["ConfigCarros"]["created_at"])){
 				->join('users', 'aluguel_motos.user_id', '=', 'users.id')
 				->join('config_motos', 'aluguel_motos.moto_id', '=', 'config_motos.id')
 				->where('aluguel_motos.user_id', $usuario_id)
-				->select('aluguel_motos.*', 'config_motos.modelo as modelo', 'config_motos.placa as placa', 'users.name as user_name', 'moto_id AS veiculo_id')
+				->where('config_motos.empresa_id', session()->all()['empresa'])
+				->select('aluguel_motos.*', 'config_motos.modelo as modelo', 'config_motos.placa as placa', 'config_motos.empresa_id', 'users.name as user_name', 'moto_id AS veiculo_id')
 				->addSelect(DB::raw("'moto' AS veiculo"))
 				->get();
 			$alugueis = $alugueisCarros->concat($alugueisMotos);
@@ -251,6 +257,7 @@ if(isset($data["ConfigCarros"]["created_at"])){
 				->join('users', 'venda_carros.user_id', '=', 'users.id')
 				->join('config_carros', 'venda_carros.carro_id', '=', 'config_carros.id')
 				->where('venda_carros.user_id', $usuario_id)
+				->where('config_carros.empresa_id', session()->all()['empresa'])
 				->select('venda_carros.*', 'users.name as user_name', 'config_carros.modelo as modelo', 'config_carros.valor_compra as valor_compra', 'config_carros.placa as placa', 'carro_id AS veiculo_id')
 				->addSelect(DB::raw("'carro' AS veiculo"))
 				->get();
@@ -259,6 +266,7 @@ if(isset($data["ConfigCarros"]["created_at"])){
 				->join('users', 'venda_motos.user_id', '=', 'users.id')
 				->join('config_motos', 'venda_motos.moto_id', '=', 'config_motos.id')
 				->where('venda_motos.user_id', $usuario_id)
+				->where('config_motos.empresa_id', session()->all()['empresa'])
 				->select('venda_motos.*', 'config_motos.modelo as modelo', 'config_motos.valor_compra as valor_compra', 'config_motos.placa as placa', 'users.name as user_name', 'moto_id AS veiculo_id')
 				->addSelect(DB::raw("'moto' AS veiculo"))
 				->get();
@@ -267,7 +275,6 @@ if(isset($data["ConfigCarros"]["created_at"])){
 		}
 
 		public function vendaCarros(Request $request){
-						
 			$Modulo = "ConfigCarros";
 
 
@@ -357,7 +364,7 @@ if(isset($data["ConfigCarros"]["created_at"])){
 					$ConfigCarros = $ConfigCarros->Where("config_carros.created_at",  "like", "%" . $AplicaFiltro . "%");			
 				}
 	
-			$ConfigCarros = $ConfigCarros->where("config_carros.alugado", "0")->where("config_carros.deleted", "0")->where("config_carros.vendido", "0");
+			$ConfigCarros = $ConfigCarros->where("config_carros.alugado", "0")->where("config_carros.deleted", "0")->where("config_carros.vendido", "0")->where('config_carros.empresa_id', session()->all()['empresa']);
 
 	
 			$ConfigCarros = $ConfigCarros->paginate(($data["ConfigCarros"]["limit"] ?: 10))
@@ -368,10 +375,12 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
 			$Registros = $this->Registros();
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+			$empresaSelecionada = session()->all()['empresa_nome'];
 			
 			return Inertia::render("vendaCarros", [
 				"columnsTable" => $columnsTable,
 				"ConfigCarros" => $ConfigCarros,
+				'empresaSelecionada' => $empresaSelecionada,
 				"hasRole" => $usuario != null,
 				"Filtros" => $data["ConfigCarros"],
 				"Registros" => $Registros,
@@ -456,9 +465,12 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$Logs = new logs; 
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+			$empresaSelecionada = session()->all()['empresa_nome'];
 
 			return Inertia::render("ConfigCarros/Create",[
 				"hasRole" => $usuario != null,
+				'empresaSelecionada' => $empresaSelecionada,
+				
 			]);
 
 		} catch (Exception $e) {	
@@ -595,7 +607,7 @@ if(isset($data["ConfigCarros"]["created_at"])){
 					$ConfigCarros = $ConfigCarros->Where("config_carros.created_at",  "like", "%" . $AplicaFiltro . "%");			
 				}
 	
-			$ConfigCarros = $ConfigCarros->where("config_carros.alugado", "0")->where("config_carros.deleted", "0")->where("config_carros.vendido", "0");
+			$ConfigCarros = $ConfigCarros->where("config_carros.alugado", "0")->where("config_carros.deleted", "0")->where("config_carros.vendido", "0")->where('empresa_id', session()->all()['empresa']);
 	
 			$ConfigCarros = $ConfigCarros->paginate(($data["ConfigCarros"]["limit"] ?: 10))
 				->appends(["page", "orderBy", "searchBy", "limit"]);
@@ -605,9 +617,11 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao);
 			$Registros = $this->Registros();
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+			$empresaSelecionada = session()->all()['empresa_nome'];
 	
 			return Inertia::render("aluguelCarros", [
 				"columnsTable" => $columnsTable,
+				'empresaSelecionada' => $empresaSelecionada,
 				"ConfigCarros" => $ConfigCarros,
 				"hasRole" => $usuario != null,
 				"Filtros" => $data["ConfigCarros"],
@@ -686,12 +700,14 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$minhasComprasCarros = DB::table('venda_carros')
 				->where('user_id', $usuario_id)
 				->join('config_carros', 'config_carros.id', 'venda_carros.carro_id')
+				->where('config_carros.empresa_id', session()->all()['empresa'])
 				->select('venda_carros.*', 'config_carros.*', DB::raw("'carro' as veiculo"))
 				->get();
 		
 			$minhasComprasMotos = DB::table('venda_motos')
 				->where('user_id', $usuario_id)
 				->join('config_motos', 'config_motos.id', 'venda_motos.moto_id')
+				->where('config_motos.empresa_id', session()->all()['empresa'])
 				->select('venda_motos.*', 'config_motos.*', DB::raw("'moto' as veiculo"))
 				->get();
 		
@@ -704,11 +720,14 @@ if(isset($data["ConfigCarros"]["created_at"])){
 				'path' => LengthAwarePaginator::resolveCurrentPath(),
 				'pageName' => 'page',
 			]);
+			$empresaSelecionada = session()->all()['empresa_nome'];
+
 			$paginatedCompras->appends($request->except('page'));
 			return Inertia::render("minhasCompras", [
 				"hasRole" => $usuario != null,
 				'categoria' => $user->role_id,    
 				'usuario_nome' => $usuario_nome,
+				'empresaSelecionada' => $empresaSelecionada,
 				'usuario_id' => $usuario_id,
 				'Users' => $Users,
 				"Filtros" => $data["ConfigCarros"],
@@ -773,15 +792,17 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$meusAlugueisCarros = DB::table('aluguel_carros')
 				->where('user_id', $usuario_id)
 				->join('config_carros', 'config_carros.id', 'aluguel_carros.carro_id')
+				->where('config_carros.empresa_id', session()->all()['empresa'])
 				->select('aluguel_carros.*', 'config_carros.*', DB::raw("'carro' as veiculo"))
 				->get();
-		
+
 			$meusAlugueisMotos = DB::table('aluguel_motos')
 				->where('user_id', $usuario_id)
 				->join('config_motos', 'config_motos.id', 'aluguel_motos.moto_id')
+				->where('config_motos.empresa_id', session()->all()['empresa'])
 				->select('aluguel_motos.*', 'config_motos.*', DB::raw("'moto' as veiculo"))
 				->get();
-		
+
 			$meusAlugueis = $meusAlugueisCarros->concat($meusAlugueisMotos);
 		
 			$perPage = $data["ConfigCarros"]["limit"] ?: 10;
@@ -791,6 +812,7 @@ if(isset($data["ConfigCarros"]["created_at"])){
 				'path' => LengthAwarePaginator::resolveCurrentPath(),
 				'pageName' => 'page',
 			]);
+			$empresaSelecionada = session()->all()['empresa_nome'];
 		
 			$paginatedAlugueis->appends($request->except('page'));
 
@@ -798,6 +820,7 @@ if(isset($data["ConfigCarros"]["created_at"])){
 				"hasRole" => $usuario != null,
 				'categoria' => $user->role_id,    
 				'usuario_nome' => $usuario_nome,
+				'empresaSelecionada' => $empresaSelecionada,
 				'usuario_id' => $usuario_id,
 				'Users' => $Users,
 				"Filtros" => $data["ConfigCarros"],
@@ -817,10 +840,12 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			$Users = DB::table('users')->get();
 			$usuario_id = $usuario->id;
 			$usuario_nome = $usuario->name;
+			$empresaSelecionada = session()->all()['empresa_nome'];
 			return Inertia::render("telaAluguelCarros", [
 				'hasRole' => $hasRole,
 				'usuario_id' => $usuario_id,
 				'categoria' => $usuario->role_id,	
+				'empresaSelecionada' => $empresaSelecionada,
 				'Users' => $Users,
 				'usuario_nome' => $usuario_nome,
 				'carro_modelo' => $carro_modelo,
@@ -915,6 +940,7 @@ if(isset($data["ConfigCarros"]["created_at"])){
 		 	$save->anexo = $url;
 $save->placa = $request->placa;
 $save->marca = $request->marca;
+$save->empresa_id = session()->all()['empresa'];
 $save->valor_diaria = $request->valor_diaria;
 $save->alugado = 0;
 $save->vendido = 0;
@@ -982,11 +1008,13 @@ $save->token = md5(date("Y-m-d H:i:s").rand(0,999999999));
 			->first();   
 			$Acao = "Abriu a Tela de Edição do Módulo de ConfigCarros";
 			$Logs = new logs; 
+			$empresaSelecionada = session()->all()['empresa_nome'];
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
 			$Registra = $Logs->RegistraLog(1,$Modulo,$Acao,$AcaoID);
 			return Inertia::render("ConfigCarros/Edit", [
 				"ConfigCarros" => $ConfigCarros,
 				"hasRole" => $usuario != null,
+				'empresaSelecionada' => $empresaSelecionada,
 
 			]);
 

@@ -38,9 +38,12 @@ class Conserto extends Controller
             $problemas_carros = DB::table('problemas_carros')->get();
 		    $Users = DB::table('users')->get();
 		    $usuario_nome = $user->name;
+			$empresaSelecionada = session()->all()['empresa_nome'];
+			
             
 			return Inertia::render("conserto", [
 				"hasRole" => $usuario != null,
+				"empresaSelecionada" => $empresaSelecionada,
                 "problemas_motos" => $problemas_motos,
 			    'categoria' => $user->role_id,	
 			    'usuario_nome' => $usuario_nome,
@@ -77,6 +80,7 @@ class Conserto extends Controller
         $conserto = new Consertos();
         $conserto->problema = $consertoNome->tipo_problema;
         $conserto->veiculo = $request->tipoVeiculo;
+		$conserto->empresa_id = session()->all()['empresa'];
         $conserto->valor_cobrado = $valorFormatado[1];
         $conserto->placa = $request->placa;
         $conserto->usuario_id = $request->usuario_id;
@@ -89,6 +93,7 @@ class Conserto extends Controller
 		$alugueisCarros = DB::table('consertos')
 			->join('users', 'consertos.usuario_id', '=', 'users.id')
 			->where('consertos.usuario_id', $usuario_id)
+			->where('empresa_id', session()->all()['empresa'])
 			->select('consertos.*', 'users.name as user_name')
 			->get();
 		return response()->json($alugueisCarros);
@@ -232,12 +237,16 @@ if(isset($data["ConfigCarros"]["created_at"])){
 		$Registra = $Logs->RegistraLog(1, $Modulo, $Acao);
 		$Registros = $this->Registros();
 		$data = Session::all();
-        $meusConsertos = DB::table('consertos')->where('usuario_id', $usuario_id);
+        $meusConsertos = DB::table('consertos')->where('usuario_id', $usuario_id)->where('empresa_id', session()->all()['empresa']);
         $meusConsertos = $meusConsertos->paginate(($data["ConfigCarros"]["limit"] ?: 10))
         ->appends(["page", "orderBy", "searchBy", "limit"]);
+		$empresaSelecionada = session()->all()['empresa_nome'];
+
         return Inertia::render("meusConsertos", [
             "hasRole" => $usuario != null,
             'categoria' => $user->role_id,	
+			"empresaSelecionada" => $empresaSelecionada,
+			
             'usuario_nome' => $usuario_nome,
             'usuario_id' => $usuario_id,
             'Users' => $Users,

@@ -452,9 +452,9 @@
             <Checkbox
               @change="toggleColumns"
               :binary="true"
-              v-model="formColumns['columns']['created_at']"
+              v-model="formColumns['columns']['empresa_nome']"
             />
-            <span>Data De Cadastro</span>
+            <span>Nome da empresa do carro</span>
           </div>
         </div>
       </div>
@@ -836,20 +836,20 @@
                   </div>
                 </th>
                 <th
-                  v-if="formColumns.columns.created_at"
+                  v-if="formColumns.columns.empresa_nome"
                   scope="col"
                   class="px-4 text-sm cursor-pointer text-center border-r group"
                   @click="
                     orderBy = {
-                      column: 'created_at',
-                      sorting: sortTable(sortVal.created_at)
-                        ? (sortVal.created_at = 1)
-                        : (sortVal.created_at = 0),
+                      column: 'empresa_nome',
+                      sorting: sortTable(sortVal.empresa_nome)
+                        ? (sortVal.empresa_nome = 1)
+                        : (sortVal.empresa_nome = 0),
                     }
                   "
                 >
                   <div class="flex">
-                    <span class="group-hover:text-indigo-800">Data De Cadastro</span>
+                    <span class="group-hover:text-indigo-800">Nome da empresa do carro</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-5 w-5 ml-auto group-hover:text-indigo-800"
@@ -1022,12 +1022,12 @@
                   >
                 </td>
                 <td
-                  v-if="formColumns?.columns?.created_at"
+                  v-if="formColumns?.columns?.empresa_nome"
                   class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
                 >
                   <div class="flex items-center">
                     <div>
-                      <div class="font-medium text-gray-900">{{ data?.data_final }}</div>
+                      <div class="font-medium text-gray-900">{{ data?.empresa_nome }}</div>
                     </div>
                   </div>
                 </td>
@@ -1134,7 +1134,7 @@ const sortVal = {
   alugado: 1,
   vendido: 1,
   status: 1,
-  created_at: 1,
+  empresa_nome: 1,
 };
 
 const formColumns = useForm({
@@ -1151,7 +1151,7 @@ const formColumns = useForm({
     alugado: validateColumnsVisibility("alugado"),
     vendido: validateColumnsVisibility("vendido"),
     status: validateColumnsVisibility("status"),
-    created_at: validateColumnsVisibility("created_at"),
+    empresa_nome: validateColumnsVisibility("empresa_nome"),
   },
 });
 
@@ -1167,7 +1167,7 @@ const form2 = useForm({
   alugado: props.Filtros?.alugado || null,
   vendido: props.Filtros?.vendido || null,
   status: props.Filtros?.status || null,
-  created_at: props.Filtros?.created_at || null,
+  empresa_nome: props.Filtros?.empresa_nome || null,
   limparFiltros: "",
 });
 

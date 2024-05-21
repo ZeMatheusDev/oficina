@@ -27,6 +27,8 @@ class User extends Authenticatable
         'is_master',
         'phone',
         'password',
+        'longitude',
+        'latitude',
         'created_at',
         'updated_at',
         'temp_password',

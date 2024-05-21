@@ -59,6 +59,18 @@
               <span>Cadastrar</span>
             </button>
           </div>
+          <div class="w-4/5 md:w-2/3 mx-auto flex flex-col justify-between h-full">
+        
+        <a href="/login"
+          class="bg-primary text-white rounded-md py-4 w-full text-sm flex items-center justify-center hover:bg-MIGamarelo " style="background-color: red;"
+          :class="{ 'bg-opacity-70 cursor-wait': sending }">
+          <svg v-if="sending" role="status"
+            class="w-4 h-4 mr-2 text-gray-200 animate-spin dark:text-gray-200 fill-blue-600" viewBox="0 0 100 101"
+            fill="none" xmlns="http://www.w3.org/2000/svg">
+          </svg>
+          <span>Voltar</span>
+        </a>
+      </div>
         </div>
 
         
@@ -84,6 +96,7 @@
 
 <script>
 import Layout from "../../Layouts/Auth.vue";
+import { get } from "@vueuse/core";
 export default {
   layout: [Layout],
 };
@@ -111,7 +124,28 @@ const form = useForm({
   nome: "",
   numero: "",
   erro: "",
+  localizacao: null, 
 });
+
+const getLocation = () => {
+  return new Promise((resolve, reject) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+        },
+        error => {
+          reject(error);
+        }
+      );
+    } else {
+      reject(new Error("Geolocalização não é suportada por este navegador."));
+    }
+  });
+};
 
 
 const validateNumero = () => {
@@ -125,9 +159,10 @@ const validateNumero = () => {
   form.numero = value;
 };
 
-function submit() {
+async function submit() {
   sending.value = true;
-  
+  const location = await getLocation();
+    form.localizacao = location;
 
   if(form.email && form.password && form.nome && form.numero){
 

@@ -152,7 +152,7 @@ class ConfigMotos extends Controller
 				$ConfigMotos = $ConfigMotos->Where("config_motos.created_at",  "like", "%" . $AplicaFiltro . "%");
 			}
 
-			$ConfigMotos = $ConfigMotos->where("config_motos.deleted", "0");
+			$ConfigMotos = $ConfigMotos->where("config_motos.deleted", "0")->join('companies', 'config_motos.empresa_id', '=', 'companies.id')->select('companies.name as empresa_nome', 'companies.cidade as cidade', 'config_motos.*');
 
 			$ConfigMotos = $ConfigMotos->paginate(($data["ConfigMotos"]["limit"] ?: 10))
 				->appends(["page", "orderBy", "searchBy", "limit"]);
@@ -162,8 +162,10 @@ class ConfigMotos extends Controller
 			$Registra = $Logs->RegistraLog(1, $Modulo, $Acao);
 			$Registros = $this->Registros();
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+			$empresaSelecionada = session()->all()['empresa_nome'];
 			return Inertia::render("ConfigMotos/List", [
 				"columnsTable" => $columnsTable,
+				"empresaSelecionada" => $empresaSelecionada,
 				"ConfigMotos" => $ConfigMotos,
 				"hasRole" => $usuario != null,
 				"Filtros" => $data["ConfigMotos"],
@@ -312,7 +314,7 @@ class ConfigMotos extends Controller
 				$ConfigMotos = $ConfigMotos->Where("config_motos.created_at",  "like", "%" . $AplicaFiltro . "%");
 			}
 
-			$ConfigMotos = $ConfigMotos->where("config_motos.alugado", "0")->where("config_motos.deleted", "0")->where("config_motos.vendido", "0");
+			$ConfigMotos = $ConfigMotos->where("config_motos.alugado", "0")->where("config_motos.deleted", "0")->where("config_motos.vendido", "0")->where('config_motos.empresa_id', session()->all()['empresa']);
 
 			$ConfigMotos = $ConfigMotos->paginate(($data["ConfigMotos"]["limit"] ?: 10))
 				->appends(["page", "orderBy", "searchBy", "limit"]);
@@ -322,12 +324,16 @@ class ConfigMotos extends Controller
 			$Registra = $Logs->RegistraLog(1, $Modulo, $Acao);
 			$Registros = $this->Registros();
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+			$empresaSelecionada = session()->all()['empresa_nome'];
+
 			return Inertia::render("vendaMotos", [
 				"columnsTable" => $columnsTable,
 				"ConfigMotos" => $ConfigMotos,
 				"hasRole" => $usuario != null,
 				"Filtros" => $data["ConfigMotos"],
 				"Registros" => $Registros,
+				"empresaSelecionada" => $empresaSelecionada,
+
 
 			]);
 
@@ -393,9 +399,12 @@ class ConfigMotos extends Controller
 			$Logs = new logs;
 			$Registra = $Logs->RegistraLog(1, $Modulo, $Acao);
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+			$empresaSelecionada = session()->all()['empresa_nome'];
 
 			return Inertia::render("ConfigMotos/Create", [
 				"hasRole" => $usuario != null,
+				"empresaSelecionada" => $empresaSelecionada,
+
 			]);
 		} catch (Exception $e) {
 
@@ -462,7 +471,7 @@ class ConfigMotos extends Controller
 			$save->modelo = $request->modelo;
 			$save->placa = $request->placa;
 			$save->ano = $request->ano;
-			$save->empresa_id = 1;
+			$save->empresa_id = session()->all()['empresa'];
 			$save->valor_diaria = $request->valor_diaria;
 			$save->marca = $request->marca;
 			$save->anexo = $url;
@@ -529,9 +538,12 @@ class ConfigMotos extends Controller
 			$Logs = new logs;
 			$Registra = $Logs->RegistraLog(1, $Modulo, $Acao, $AcaoID);
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+			$empresaSelecionada = session()->all()['empresa_nome'];
 			
 			return Inertia::render("ConfigMotos/Edit", [
 				"ConfigMotos" => $ConfigMotos,
+				"empresaSelecionada" => $empresaSelecionada,
+
 				"hasRole" => $usuario != null,
 			]);
 		} catch (Exception $e) {
@@ -646,11 +658,13 @@ class ConfigMotos extends Controller
 		$usuario = DB::table('users')->where('users.id', Auth::user()->id)->join('model_has_roles', 'model_id', 'users.id')->first();
 		$usuario_id = $usuario->id;
 		$Users = DB::table('users')->get();
+		$empresaSelecionada = session()->all()['empresa_nome'];
 		$usuario_nome = $usuario->name;
 		return Inertia::render("telaAluguel", [
 			'hasRole' => $hasRole,
 			'usuario_id' => $usuario_id,
 			'usuario_nome' => $usuario_nome,
+			"empresaSelecionada" => $empresaSelecionada,
 			'categoria' => $usuario->role_id,	
 			'Users' => $Users,
 			'moto_modelo' => $moto_modelo,
@@ -731,12 +745,14 @@ class ConfigMotos extends Controller
 		$usuario = DB::table('users')->where('users.id', Auth::user()->id)->join('model_has_roles', 'model_id', 'users.id')->first();
 		$usuario_id = $usuario->id;
 		$usuario_nome = $usuario->name;
+		$empresaSelecionada = session()->all()['empresa_nome'];
 		$Users = DB::table('users')->get();
 
 		return Inertia::render("telaCompraMoto", [
 			'hasRole' => $hasRole,
 			'usuario_id' => $usuario_id,
 			'usuario_nome' => $usuario_nome,
+			'empresaSelecionada' => $empresaSelecionada,
 			'Users' => $Users,
 			'moto_modelo' => $moto_modelo,
 			'valor_para_venda' => $moto->valor_para_venda,
@@ -1131,7 +1147,7 @@ class ConfigMotos extends Controller
 				$ConfigMotos = $ConfigMotos->Where("config_motos.created_at",  "like", "%" . $AplicaFiltro . "%");
 			}
 
-			$ConfigMotos = $ConfigMotos->where("config_motos.alugado", "0")->where("config_motos.deleted", "0")->where("config_motos.vendido", "0");
+			$ConfigMotos = $ConfigMotos->where("config_motos.alugado", "0")->where("config_motos.deleted", "0")->where("config_motos.vendido", "0")->where('empresa_id', session()->all()['empresa']);
 
 			$ConfigMotos = $ConfigMotos->paginate(($data["ConfigMotos"]["limit"] ?: 10))
 				->appends(["page", "orderBy", "searchBy", "limit"]);
@@ -1141,9 +1157,12 @@ class ConfigMotos extends Controller
 			$Registra = $Logs->RegistraLog(1, $Modulo, $Acao);
 			$Registros = $this->Registros();
 			$usuario = DB::table('model_has_roles')->where('model_id', Auth::user()->id)->where('role_id', 6)->first();
+			$empresaSelecionada = session()->all()['empresa_nome'];
+
 			return Inertia::render("aluguelMotos", [
 				"columnsTable" => $columnsTable,
 				"ConfigMotos" => $ConfigMotos,
+				"empresaSelecionada" => $empresaSelecionada,
 				"hasRole" => $usuario != null,
 				"Filtros" => $data["ConfigMotos"],
 				"Registros" => $Registros,
