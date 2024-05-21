@@ -403,7 +403,6 @@ const trocouEmpresa = async () => {
 	let empresa_id = form.empresa_id.value;
 	axios.get(`/atualizarEmpresa/${empresa_id}`)
 		.then(response => {
-			form.empresaSelecionada = response.data;
 			window.location.reload();
 
 		})
