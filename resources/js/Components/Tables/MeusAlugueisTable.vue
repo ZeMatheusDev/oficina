@@ -4,7 +4,7 @@
 
     <div class="mt-4 flex flex-col max-md:px-2 py-1 rounded-lg shadow-sm">
       <div class="inline-block min-w-full py-2 align-middle">
-        <h2 class="text-xl font-semibold fontInter text-center py-5"><b>Seus veiculossadsadsa alugados:</b></h2>
+        <h2 class="text-xl font-semibold fontInter text-center py-5"><b>Seus veiculos alugados:</b></h2>
         <div
           class="overflow-hidden overflow-x-visible ring-1 ring-black ring-opacity-5 md:rounded-lg"
         >
@@ -20,20 +20,20 @@
                 </th>
 
                 <th
-                  v-if="formColumns.columns.problema"
+                  v-if="formColumns.columns.modelo"
                   scope="col"
                   class="px-4 text-sm cursor-pointer text-center border-r group"
                   @click="
                     orderBy = {
-                      column: 'problema',
-                      sorting: sortTable(sortVal.problema)
-                        ? (sortVal.problema = 1)
-                        : (sortVal.problema = 0),
+                      column: 'modelo',
+                      sorting: sortTable(sortVal.modelo)
+                        ? (sortVal.modelo = 1)
+                        : (sortVal.modelo = 0),
                     }
                   "
                 >
                   <div class="flex">
-                    <span class="group-hover:text-indigo-800">problema</span>
+                    <span class="group-hover:text-indigo-800">Modelo</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-5 w-5 ml-auto group-hover:text-indigo-800"
@@ -51,20 +51,20 @@
                   </div>
                 </th>
                 <th
-                  v-if="formColumns.columns.valor_cobrado"
+                  v-if="formColumns.columns.inicio_aluguel"
                   scope="col"
                   class="px-4 text-sm cursor-pointer text-center border-r group"
                   @click="
                     orderBy = {
-                      column: 'valor_cobrado',
-                      sorting: sortTable(sortVal.valor_cobrado)
-                        ? (sortVal.valor_cobrado = 1)
-                        : (sortVal.valor_cobrado = 0),
+                      column: 'inicio_aluguel',
+                      sorting: sortTable(sortVal.inicio_aluguel)
+                        ? (sortVal.inicio_aluguel = 1)
+                        : (sortVal.inicio_aluguel = 0),
                     }
                   "
                 >
                   <div class="flex">
-                    <span class="group-hover:text-indigo-800">Valor cobrado</span>
+                    <span class="group-hover:text-indigo-800">Inicio do aluguel</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-5 w-5 ml-auto group-hover:text-indigo-800"
@@ -145,20 +145,20 @@
                 </th>
 
                 <th
-                  v-if="formColumns.columns.data_finalizacao"
+                  v-if="formColumns.columns.fim_aluguel"
                   scope="col"
                   class="px-4 text-sm cursor-pointer text-center border-r group"
                   @click="
                     orderBy = {
-                      column: 'data_finalizacao',
-                      sorting: sortTable(sortVal.data_finalizacao)
-                        ? (sortVal.data_finalizacao = 1)
-                        : (sortVal.data_finalizacao = 0),
+                      column: 'fim_aluguel',
+                      sorting: sortTable(sortVal.fim_aluguel)
+                        ? (sortVal.fim_aluguel = 1)
+                        : (sortVal.fim_aluguel = 0),
                     }
                   "
                 >
                   <div class="flex">
-                    <span class="group-hover:text-indigo-800">Data de finalizacao do conserto</span>
+                    <span class="group-hover:text-indigo-800">Fim do aluguel</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="h-5 w-5 ml-auto group-hover:text-indigo-800"
@@ -202,22 +202,22 @@
                 </td>
 
                 <td
-                  v-if="formColumns?.columns?.problema"
+                  v-if="formColumns?.columns?.modelo"
                   class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
                 >
                   <div class="flex items-center">
                     <div>
-                      <div class="font-medium text-gray-900">{{ data?.problema }}</div>
+                      <div class="font-medium text-gray-900">{{ data?.modelo }}</div>
                     </div>
                   </div>
                 </td>
                 <td
-                  v-if="formColumns?.columns?.valor_cobrado"
+                  v-if="formColumns?.columns?.inicio_aluguel"
                   class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
                 >
                   <div class="flex items-center">
                     <div>
-                      <div class="font-medium text-gray-900">R${{ data?.valor_cobrado }}</div>
+                      <div class="font-medium text-gray-900">{{ data?.inicio_aluguel }}</div>
                     </div>
                   </div>
                 </td>
@@ -243,12 +243,12 @@
                 </td>
 
                 <td
-                  v-if="formColumns?.columns?.data_finalizacao"
+                  v-if="formColumns?.columns?.fim_aluguel"
                   class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
                 >
                   <div class="flex items-center">
                     <div>
-                      <div class="font-medium text-gray-900">{{ data?.data_finalizacao }}</div>
+                      <div class="font-medium text-gray-900">{{ data?.fim_aluguel }}</div>
                     </div>
                   </div>
                 </td>
@@ -296,7 +296,6 @@ const _ = require("lodash");
 
 const props = defineProps({
   dataTable: Object,
-
   Filtros: Object,
   Registros: Object,
 });
@@ -332,31 +331,31 @@ const statusOption = [
 ];
 
 const sortVal = {
-  problema: 1,
-  valor_cobrado: 1,
+  modelo: 1,
+  inicio_aluguel: 1,
   veiculo: 1,
   placa: 1,
-  data_finalizacao: 1,
+  fim_aluguel: 1,
 };
 
 const formColumns = useForm({
   route_of_list: "list.ConfigCarros",
   columns: {
-    problema: validateColumnsVisibility("problema"),
-    valor_cobrado: validateColumnsVisibility("valor_cobrado"),
+    modelo: validateColumnsVisibility("modelo"),
+    inicio_aluguel: validateColumnsVisibility("inicio_aluguel"),
     veiculo: validateColumnsVisibility("veiculo"),
     placa: validateColumnsVisibility("placa"),
-    data_finalizacao: validateColumnsVisibility("data_finalizacao"),
+    fim_aluguel: validateColumnsVisibility("fim_aluguel"),
 
   },
 });
 
 const form2 = useForm({
-  problema: props.Filtros?.problema || null,
-  valor_cobrado: props.Filtros?.valor_cobrado || null,
+  modelo: props.Filtros?.modelo || null,
+  inicio_aluguel: props.Filtros?.inicio_aluguel || null,
   veiculo: props.Filtros?.veiculo || null,
   placa: props.Filtros?.placa || null,
-  data_finalizacao: props.Filtros?.data_finalizacao || null,
+  fim_aluguel: props.Filtros?.fim_aluguel || null,
   limparFiltros: "",
 });
 
