@@ -14,6 +14,7 @@ use App\Models\aluguelCarro;
 use App\Models\HistoricoAluguelCarro;
 use App\Models\ConfigCarross;
 use App\Models\Consertos;
+use App\Models\HistoricoConsertos;
 use App\Models\vendaCarros;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
@@ -118,6 +119,23 @@ class Conserto extends Controller
 
     public function meusConsertos(Request $request){
 		$Modulo = "ConfigCarros";
+		$dataDeHoje = Carbon::now();
+		$consertos = DB::table('consertos')->get();
+		foreach($consertos as $conserto){
+			$fimConserto = Carbon::createFromFormat('d/m/Y', $conserto->data_finalizacao);
+			if($fimConserto < $dataDeHoje){
+				$historico = new HistoricoConsertos();
+				$historico->problema = $conserto->problema;
+				$historico->valor_cobrado = $conserto->valor_cobrado;
+				$historico->veiculo = $conserto->veiculo;
+				$historico->placa = $conserto->placa;
+				$historico->usuario_id = $conserto->usuario_id;
+				$historico->data_finalizacao = $conserto->data_finalizacao;
+				$historico->save();
+				Consertos::where('id', $conserto->id)->delete();
+			}
+		}
+		
 		$data = Session::all();
 		if(!isset($data["ConfigCarros"]) || empty($data["ConfigCarros"])){
 			session(["ConfigCarros" => array("status"=>"0", "orderBy"=>array("column"=>"created_at","sorting"=>"1"),"limit"=>"10")]);

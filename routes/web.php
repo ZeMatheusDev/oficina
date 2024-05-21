@@ -170,6 +170,7 @@ Route::get('ConfigCarros', [ConfigCarros::class, 'index'])->name('list.ConfigCar
     Route::post('compradoCarros', [ConfigCarros::class, 'compradoCarros'])->name('compradoCarros');
     Route::get('meusAlugueis', [ConfigCarros::class, 'meusAlugueis'])->name('meusAlugueis');
     Route::get('minhasCompras', [ConfigCarros::class, 'minhasCompras'])->name('minhasCompras');
+    Route::get('/buscarDadosAluguel/{token}', [ConfigCarros::class, 'buscarDadosAluguel'])->name('buscarDadosAluguel');
     
     Route::get('ConfigMotos', [ConfigMotos::class, 'index'])->name('list.ConfigMotos');
 	Route::post('ConfigMotos', [ConfigMotos::class, 'index'])->name('listP.ConfigMotos');

@@ -224,6 +224,10 @@ if(isset($data["ConfigCarros"]["created_at"])){
 		
 		}
 
+		public function buscarDadosAluguel($token){
+			
+		}
+
 		public function vendaCarros(Request $request){
 						
 			$Modulo = "ConfigCarros";

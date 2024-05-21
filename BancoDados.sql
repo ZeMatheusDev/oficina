@@ -365,7 +365,18 @@ CREATE TABLE consertos (
     valor_cobrado VARCHAR(100),
     veiculo VARCHAR(100),
     placa VARCHAR(100),
-    usuario_id bigint(20) unsigned NOT NULL
+    usuario_id bigint(20) unsigned NOT NULL,
+    data_finalizacao VARCHAR(100)
+);
+
+CREATE TABLE historico_consertos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    problema VARCHAR(100),
+    valor_cobrado VARCHAR(100),
+    veiculo VARCHAR(100),
+    placa VARCHAR(100),
+    usuario_id bigint(20) unsigned NOT NULL,
+    data_finalizacao VARCHAR(100)
 );
 
 
