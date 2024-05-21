@@ -14,7 +14,7 @@
           </svg>
         </button>
        
-        <div style="display: flex; align-items: center; margin-left: 1000px;">Empresa selecionada: {{ $props?.empresaSelecionada }}</div>
+        <div style="display: flex; align-items: center; margin-left: 860px; font-size: 18px;">Empresa selecionada: &nbsp;<strong style="font-size: 20px;">{{ $props?.empresaSelecionada }}</strong></div>
 
         <div class="flex ml-auto items-center">
           <div class="flex flex-col mr-3">
