@@ -639,7 +639,7 @@ INSERT IGNORE INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUE
 	(12, 'App\\Models\\User', 52),
 	(12, 'App\\Models\\User', 53),
 	(12, 'App\\Models\\User', 55),
-	(13, 'App\\Models\\User', 56),
+	(13, 'App\\Models\\User', 56);
 /*!40000 ALTER TABLE `model_has_roles` ENABLE KEYS */;
 
 -- Copiando estrutura para tabela projeto_estagio.permissions
@@ -864,6 +864,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `status` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `is_master` int(11) NOT NULL DEFAULT 0,
   `phone` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `localizacao` point DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL,
   `temp_password` int(11) DEFAULT 0 COMMENT '// Se o usuário estiver com a senha temporária, essa coluna possui um valor falso em binário. 0',

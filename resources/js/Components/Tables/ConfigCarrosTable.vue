@@ -282,6 +282,18 @@
           </div>
           <div>
             <span class="p-float-label">
+              <InputText
+                v-model="form2.vendido"
+                id="vendido"
+                type="text"
+                class="w-full"
+                required
+              />
+              <label for="vendido" class="text-sm">Vendido?</label>
+            </span>
+          </div>
+          <div>
+            <span class="p-float-label">
               <Dropdown
                 class="w-full"
                 v-model="form2.status"
@@ -419,6 +431,14 @@
               v-model="formColumns['columns']['alugado']"
             />
             <span>Alugado?</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <Checkbox
+              @change="toggleColumns"
+              :binary="true"
+              v-model="formColumns['columns']['vendido']"
+            />
+            <span>Vendido?</span>
           </div>
           <div class="flex items-center space-x-2">
             <Checkbox
@@ -754,6 +774,37 @@
                   </div>
                 </th>
                 <th
+                  v-if="formColumns.columns.vendido"
+                  scope="col"
+                  class="px-4 text-sm cursor-pointer text-center border-r group"
+                  @click="
+                    orderBy = {
+                      column: 'vendido',
+                      sorting: sortTable(sortVal.vendido)
+                        ? (sortVal.vendido = 1)
+                        : (sortVal.vendido = 0),
+                    }
+                  "
+                >
+                  <div class="flex">
+                    <span class="group-hover:text-indigo-800">Vendido?</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                      />
+                    </svg>
+                  </div>
+                </th>
+                <th
                   v-if="formColumns.columns.status"
                   scope="col"
                   class="px-4 text-sm cursor-pointer text-center border-r group"
@@ -945,6 +996,17 @@
                   </div>
                 </td>
                 <td
+                  v-if="formColumns?.columns?.vendido"
+                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+                >
+                  <div class="flex items-center">
+                    <div>
+                      <div class="font-medium text-gray-900" v-if="data?.vendido == 0">Não</div>
+											<div class="font-medium text-gray-900" v-if="data?.vendido == 1">Sim</div>
+                    </div>
+                  </div>
+                </td>
+                <td
                   v-if="formColumns?.columns?.status"
                   class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 text-center"
                 >
@@ -1070,6 +1132,7 @@ const sortVal = {
   valor_compra: 1,
   observacao: 1,
   alugado: 1,
+  vendido: 1,
   status: 1,
   created_at: 1,
 };
@@ -1086,6 +1149,7 @@ const formColumns = useForm({
     valor_compra: validateColumnsVisibility("valor_compra"),
     observacao: validateColumnsVisibility("observacao"),
     alugado: validateColumnsVisibility("alugado"),
+    vendido: validateColumnsVisibility("vendido"),
     status: validateColumnsVisibility("status"),
     created_at: validateColumnsVisibility("created_at"),
   },
@@ -1101,6 +1165,7 @@ const form2 = useForm({
   valor_compra: props.Filtros?.valor_compra || null,
   observacao: props.Filtros?.observacao || null,
   alugado: props.Filtros?.alugado || null,
+  vendido: props.Filtros?.vendido || null,
   status: props.Filtros?.status || null,
   created_at: props.Filtros?.created_at || null,
   limparFiltros: "",

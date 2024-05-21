@@ -85,6 +85,15 @@ class Conserto extends Controller
         return redirect()->route('home');
     }
 
+	public function buscarDadosConserto($usuario_id){
+		$alugueisCarros = DB::table('consertos')
+			->join('users', 'consertos.usuario_id', '=', 'users.id')
+			->where('consertos.usuario_id', $usuario_id)
+			->select('consertos.*', 'users.name as user_name')
+			->get();
+		return response()->json($alugueisCarros);
+	}
+
     public function Registros()
 	{
 

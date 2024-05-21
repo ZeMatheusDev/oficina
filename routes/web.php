@@ -146,7 +146,7 @@ Route::get('logsUsuario', [logs::class, 'index'])->name('list.logsUsuario');
     Route::post('consertar', [Conserto::class, 'consertar'])->name('consertar');
     Route::get('meusConsertos', [Conserto::class, 'meusConsertos'])->name('meusConsertos');
     Route::get('todosConsertos', [Conserto::class, 'todosConsertos'])->name('todosConsertos');
-    
+    Route::get('/buscarDadosConserto/{usuario_id}', [Conserto::class, 'buscarDadosConserto'])->name('buscarDadosConserto');
 
 
 Route::get('ConfigCarros', [ConfigCarros::class, 'index'])->name('list.ConfigCarros');
@@ -170,7 +170,8 @@ Route::get('ConfigCarros', [ConfigCarros::class, 'index'])->name('list.ConfigCar
     Route::post('compradoCarros', [ConfigCarros::class, 'compradoCarros'])->name('compradoCarros');
     Route::get('meusAlugueis', [ConfigCarros::class, 'meusAlugueis'])->name('meusAlugueis');
     Route::get('minhasCompras', [ConfigCarros::class, 'minhasCompras'])->name('minhasCompras');
-    Route::get('/buscarDadosAluguel/{token}', [ConfigCarros::class, 'buscarDadosAluguel'])->name('buscarDadosAluguel');
+    Route::get('/buscarDadosAluguel/{usuario_id}', [ConfigCarros::class, 'buscarDadosAluguel'])->name('buscarDadosAluguel');
+    Route::get('/buscarDadosCompra/{usuario_id}', [ConfigCarros::class, 'buscarDadosCompra'])->name('buscarDadosCompra');
     
     Route::get('ConfigMotos', [ConfigMotos::class, 'index'])->name('list.ConfigMotos');
 	Route::post('ConfigMotos', [ConfigMotos::class, 'index'])->name('listP.ConfigMotos');

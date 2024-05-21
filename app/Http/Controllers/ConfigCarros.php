@@ -223,9 +223,47 @@ if(isset($data["ConfigCarros"]["created_at"])){
 			}
 		
 		}
+		
+		public function buscarDadosAluguel($usuario_id)
+		{
+			$alugueisCarros = DB::table('aluguel_carros')
+				->join('users', 'aluguel_carros.user_id', '=', 'users.id')
+				->join('config_carros', 'aluguel_carros.carro_id', '=', 'config_carros.id')
+				->where('aluguel_carros.user_id', $usuario_id)
+				->select('aluguel_carros.*', 'users.name as user_name', 'config_carros.modelo as modelo', 'config_carros.placa as placa', 'carro_id AS veiculo_id')
+				->addSelect(DB::raw("'carro' AS veiculo"))
+				->get();
 
-		public function buscarDadosAluguel($token){
-			
+			$alugueisMotos = DB::table('aluguel_motos')
+				->join('users', 'aluguel_motos.user_id', '=', 'users.id')
+				->join('config_motos', 'aluguel_motos.moto_id', '=', 'config_motos.id')
+				->where('aluguel_motos.user_id', $usuario_id)
+				->select('aluguel_motos.*', 'config_motos.modelo as modelo', 'config_motos.placa as placa', 'users.name as user_name', 'moto_id AS veiculo_id')
+				->addSelect(DB::raw("'moto' AS veiculo"))
+				->get();
+			$alugueis = $alugueisCarros->concat($alugueisMotos);
+			return response()->json($alugueis);
+		}
+
+		public function buscarDadosCompra($usuario_id)
+		{
+			$comprasCarros = DB::table('venda_carros')
+				->join('users', 'venda_carros.user_id', '=', 'users.id')
+				->join('config_carros', 'venda_carros.carro_id', '=', 'config_carros.id')
+				->where('venda_carros.user_id', $usuario_id)
+				->select('venda_carros.*', 'users.name as user_name', 'config_carros.modelo as modelo', 'config_carros.valor_compra as valor_compra', 'config_carros.placa as placa', 'carro_id AS veiculo_id')
+				->addSelect(DB::raw("'carro' AS veiculo"))
+				->get();
+
+			$comprasMotos = DB::table('venda_motos')
+				->join('users', 'venda_motos.user_id', '=', 'users.id')
+				->join('config_motos', 'venda_motos.moto_id', '=', 'config_motos.id')
+				->where('venda_motos.user_id', $usuario_id)
+				->select('venda_motos.*', 'config_motos.modelo as modelo', 'config_motos.valor_compra as valor_compra', 'config_motos.placa as placa', 'users.name as user_name', 'moto_id AS veiculo_id')
+				->addSelect(DB::raw("'moto' AS veiculo"))
+				->get();
+			$compras = $comprasCarros->concat($comprasMotos);
+			return response()->json($compras);
 		}
 
 		public function vendaCarros(Request $request){
@@ -666,7 +704,6 @@ if(isset($data["ConfigCarros"]["created_at"])){
 				'path' => LengthAwarePaginator::resolveCurrentPath(),
 				'pageName' => 'page',
 			]);
-		
 			$paginatedCompras->appends($request->except('page'));
 			return Inertia::render("minhasCompras", [
 				"hasRole" => $usuario != null,

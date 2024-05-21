@@ -1,274 +1,552 @@
 <template>
-  <div class="bg-white px-4 shadow-lg rounded-xl">
+  <div class="bg-white px-4 shadow-lg rounded-xl" v-if="form2.categoria == 8">
   
 
-    <div class="mt-4 flex flex-col max-md:px-2 py-1 rounded-lg shadow-sm">
-      <div class="inline-block min-w-full py-2 align-middle">
-        <h2 class="text-xl font-semibold fontInter text-center py-5"><b>Seus veiculos em conserto:</b></h2>
-        <div
-          class="overflow-hidden overflow-x-visible ring-1 ring-black ring-opacity-5 md:rounded-lg"
-        >
-          <table class="min-w-full divide-y divide-gray-300">
-            <thead class="mb-24">
-              <tr class="text-gray-500 font-bold select-none" @click="setParams">
-                <th
-                  scope="col"
-                  class="px-4 text-sm cursor-pointer text-center border-r group"
-                  style="width: 2%"
-                >
-  
-                </th>
-
-                <th
-                  v-if="formColumns.columns.problema"
-                  scope="col"
-                  class="px-4 text-sm cursor-pointer text-center border-r group"
-                  @click="
-                    orderBy = {
-                      column: 'problema',
-                      sorting: sortTable(sortVal.problema)
-                        ? (sortVal.problema = 1)
-                        : (sortVal.problema = 0),
-                    }
-                  "
-                >
-                  <div class="flex">
-                    <span class="group-hover:text-indigo-800">problema</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5 ml-auto group-hover:text-indigo-800"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
-                      />
-                    </svg>
-                  </div>
-                </th>
-                <th
-                  v-if="formColumns.columns.valor_cobrado"
-                  scope="col"
-                  class="px-4 text-sm cursor-pointer text-center border-r group"
-                  @click="
-                    orderBy = {
-                      column: 'valor_cobrado',
-                      sorting: sortTable(sortVal.valor_cobrado)
-                        ? (sortVal.valor_cobrado = 1)
-                        : (sortVal.valor_cobrado = 0),
-                    }
-                  "
-                >
-                  <div class="flex">
-                    <span class="group-hover:text-indigo-800">Valor cobrado</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5 ml-auto group-hover:text-indigo-800"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
-                      />
-                    </svg>
-                  </div>
-                </th>
-                <th
-                  v-if="formColumns.columns.veiculo"
-                  scope="col"
-                  class="px-4 text-sm cursor-pointer text-center border-r group"
-                  @click="
-                    orderBy = {
-                      column: 'veiculo',
-                      sorting: sortTable(sortVal.veiculo)
-                        ? (sortVal.veiculo = 1)
-                        : (sortVal.veiculo = 0),
-                    }
-                  "
-                >
-                  <div class="flex">
-                    <span class="group-hover:text-indigo-800">Veiculo</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5 ml-auto group-hover:text-indigo-800"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
-                      />
-                    </svg>
-                  </div>
-                </th>
-                <th
-                  v-if="formColumns.columns.placa"
-                  scope="col"
-                  class="px-4 text-sm cursor-pointer text-center border-r group"
-                  @click="
-                    orderBy = {
-                      column: 'placa',
-                      sorting: sortTable(sortVal.placa)
-                        ? (sortVal.placa = 1)
-                        : (sortVal.placa = 0),
-                    }
-                  "
-                >
-                  <div class="flex">
-                    <span class="group-hover:text-indigo-800">placa</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5 ml-auto group-hover:text-indigo-800"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
-                      />
-                    </svg>
-                  </div>
-                </th>
-
-                <th
-                  v-if="formColumns.columns.data_finalizacao"
-                  scope="col"
-                  class="px-4 text-sm cursor-pointer text-center border-r group"
-                  @click="
-                    orderBy = {
-                      column: 'data_finalizacao',
-                      sorting: sortTable(sortVal.data_finalizacao)
-                        ? (sortVal.data_finalizacao = 1)
-                        : (sortVal.data_finalizacao = 0),
-                    }
-                  "
-                >
-                  <div class="flex">
-                    <span class="group-hover:text-indigo-800">Data de finalizacao do conserto</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5 ml-auto group-hover:text-indigo-800"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
-                      />
-                    </svg>
-                  </div>
-                </th>
-								</tr>
-                
-
-            </thead>
-            <tbody class="divide-y divide-gray-200 bg-white">
-              <tr
-                v-for="(data, key) in dataTable?.data"
-                :key="key"
-                class="hover:bg-indigo-50/20"
-                :class="{ 'bg-gray-50': key % 2 }"
+  <div class="mt-4 flex flex-col max-md:px-2 py-1 rounded-lg shadow-sm">
+    <div class="inline-block min-w-full py-2 align-middle">
+      <h2 class="text-xl font-semibold fontInter text-center py-5"><b>Seus veiculos em conserto:</b></h2>
+      <div
+        class="overflow-hidden overflow-x-visible ring-1 ring-black ring-opacity-5 md:rounded-lg"
+      >
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead class="mb-24">
+            <tr class="text-gray-500 font-bold select-none" @click="setParams">
+              <th
+                scope="col"
+                class="px-4 text-sm cursor-pointer text-center border-r group"
+                style="width: 2%"
               >
-                <td class="whitespace-nowrap py-6 pl-4 pr-3 text-sm sm:pl-6">
-                  <div class="flex items-center">
-                    <div>
-                      <SlideUpDown v-model="DeleteSelect" :duration="300">
-                        <Checkbox
-                          inputId="id"
-                          name="selected"
-                          :value="data?.id"
-                          v-model="selected"
-                        />
-                      </SlideUpDown>
-                    </div>
-                  </div>
-                </td>
 
-                <td
-                  v-if="formColumns?.columns?.problema"
-                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
-                >
-                  <div class="flex items-center">
-                    <div>
-                      <div class="font-medium text-gray-900">{{ data?.problema }}</div>
-                    </div>
-                  </div>
-                </td>
-                <td
-                  v-if="formColumns?.columns?.valor_cobrado"
-                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
-                >
-                  <div class="flex items-center">
-                    <div>
-                      <div class="font-medium text-gray-900">R${{ data?.valor_cobrado }}</div>
-                    </div>
-                  </div>
-                </td>
-                <td
-                  v-if="formColumns?.columns?.veiculo"
-                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
-                >
-                  <div class="flex items-center">
-                    <div>
-                      <div class="font-medium text-gray-900">{{ data?.veiculo }}</div>
-                    </div>
-                  </div>
-                </td>
-                <td
-                  v-if="formColumns?.columns?.placa"
-                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
-                >
-                  <div class="flex items-center">
-                    <div>
-                      <div class="font-medium text-gray-900">{{ data?.placa }}</div>
-                    </div>
-                  </div>
-                </td>
+              </th>
 
-                <td
-                  v-if="formColumns?.columns?.data_finalizacao"
-                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
-                >
-                  <div class="flex items-center">
-                    <div>
-                      <div class="font-medium text-gray-900">{{ data?.data_finalizacao }}</div>
-                    </div>
-                  </div>
-                </td>
+              <th
+                v-if="formColumns.columns.problema"
+                scope="col"
+                class="px-4 text-sm cursor-pointer text-center border-r group"
+                @click="
+                  orderBy = {
+                    column: 'problema',
+                    sorting: sortTable(sortVal.problema)
+                      ? (sortVal.problema = 1)
+                      : (sortVal.problema = 0),
+                  }
+                "
+              >
+                <div class="flex">
+                  <span class="group-hover:text-indigo-800">problema</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                    />
+                  </svg>
+                </div>
+              </th>
+              <th
+                v-if="formColumns.columns.valor_cobrado"
+                scope="col"
+                class="px-4 text-sm cursor-pointer text-center border-r group"
+                @click="
+                  orderBy = {
+                    column: 'valor_cobrado',
+                    sorting: sortTable(sortVal.valor_cobrado)
+                      ? (sortVal.valor_cobrado = 1)
+                      : (sortVal.valor_cobrado = 0),
+                  }
+                "
+              >
+                <div class="flex">
+                  <span class="group-hover:text-indigo-800">Valor cobrado</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                    />
+                  </svg>
+                </div>
+              </th>
+              <th
+                v-if="formColumns.columns.veiculo"
+                scope="col"
+                class="px-4 text-sm cursor-pointer text-center border-r group"
+                @click="
+                  orderBy = {
+                    column: 'veiculo',
+                    sorting: sortTable(sortVal.veiculo)
+                      ? (sortVal.veiculo = 1)
+                      : (sortVal.veiculo = 0),
+                  }
+                "
+              >
+                <div class="flex">
+                  <span class="group-hover:text-indigo-800">Veiculo</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                    />
+                  </svg>
+                </div>
+              </th>
+              <th
+                v-if="formColumns.columns.placa"
+                scope="col"
+                class="px-4 text-sm cursor-pointer text-center border-r group"
+                @click="
+                  orderBy = {
+                    column: 'placa',
+                    sorting: sortTable(sortVal.placa)
+                      ? (sortVal.placa = 1)
+                      : (sortVal.placa = 0),
+                  }
+                "
+              >
+                <div class="flex">
+                  <span class="group-hover:text-indigo-800">placa</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                    />
+                  </svg>
+                </div>
+              </th>
 
-
+              <th
+                v-if="formColumns.columns.data_finalizacao"
+                scope="col"
+                class="px-4 text-sm cursor-pointer text-center border-r group"
+                @click="
+                  orderBy = {
+                    column: 'data_finalizacao',
+                    sorting: sortTable(sortVal.data_finalizacao)
+                      ? (sortVal.data_finalizacao = 1)
+                      : (sortVal.data_finalizacao = 0),
+                  }
+                "
+              >
+                <div class="flex">
+                  <span class="group-hover:text-indigo-800">Data de finalizacao do conserto</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                    />
+                  </svg>
+                </div>
+              </th>
               </tr>
-            </tbody>
-          </table>
-        </div>
+              
+
+          </thead>
+          <tbody class="divide-y divide-gray-200 bg-white">
+            <tr
+              v-for="(data, key) in dataTable?.data"
+              :key="key"
+              class="hover:bg-indigo-50/20"
+              :class="{ 'bg-gray-50': key % 2 }"
+            >
+              <td class="whitespace-nowrap py-6 pl-4 pr-3 text-sm sm:pl-6">
+                <div class="flex items-center">
+                  <div>
+                    <SlideUpDown v-model="DeleteSelect" :duration="300">
+                      <Checkbox
+                        inputId="id"
+                        name="selected"
+                        :value="data?.id"
+                        v-model="selected"
+                      />
+                    </SlideUpDown>
+                  </div>
+                </div>
+              </td>
+
+              <td
+                v-if="formColumns?.columns?.problema"
+                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+              >
+                <div class="flex items-center">
+                  <div>
+                    <div class="font-medium text-gray-900">{{ data?.problema }}</div>
+                  </div>
+                </div>
+              </td>
+              <td
+                v-if="formColumns?.columns?.valor_cobrado"
+                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+              >
+                <div class="flex items-center">
+                  <div>
+                    <div class="font-medium text-gray-900">R${{ data?.valor_cobrado }}</div>
+                  </div>
+                </div>
+              </td>
+              <td
+                v-if="formColumns?.columns?.veiculo"
+                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+              >
+                <div class="flex items-center">
+                  <div>
+                    <div class="font-medium text-gray-900">{{ data?.veiculo }}</div>
+                  </div>
+                </div>
+              </td>
+              <td
+                v-if="formColumns?.columns?.placa"
+                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+              >
+                <div class="flex items-center">
+                  <div>
+                    <div class="font-medium text-gray-900">{{ data?.placa }}</div>
+                  </div>
+                </div>
+              </td>
+
+              <td
+                v-if="formColumns?.columns?.data_finalizacao"
+                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+              >
+                <div class="flex items-center">
+                  <div>
+                    <div class="font-medium text-gray-900">{{ data?.data_finalizacao }}</div>
+                  </div>
+                </div>
+              </td>
+
+
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-    <Pagination
-      :links="dataTable"
-      :orderBy="props.Filtros.orderBy"
-      :limit="props.Filtros.limit"
-    />
-    <Delete v-model:open="openDelTodos" @del="delTodos" />
-    <Delete v-model:open="openDelSelect" @del="del" />
-    <Restaurar v-model:open="openRestaurarTodos" @del="RestaurarTodos" />
   </div>
+  <Pagination
+    :links="dataTable"
+    :orderBy="props.Filtros.orderBy"
+    :limit="props.Filtros.limit"
+  />
+  <Delete v-model:open="openDelTodos" @del="delTodos" />
+  <Delete v-model:open="openDelSelect" @del="del" />
+  <Restaurar v-model:open="openRestaurarTodos" @del="RestaurarTodos" />
+</div>
+<div class="bg-white px-4 shadow-lg rounded-xl" v-if="form2.categoria != 8">
+  
+  <div class="form-group">
+    <label for="status" class="text-sm">Selecione o cliente:</label>
+
+        <span class="p-float-label">
+          <Dropdown class="w-full" v-model="form2.usuario_id" :value="form2.nome" :options="Users" @change="chamadaAPI()" optionLabel="name" dataKey="value"
+            required />
+        </span>
+      </div>
+  <div class="mt-4 flex flex-col max-md:px-2 py-1 rounded-lg shadow-sm">
+    <div class="inline-block min-w-full py-2 align-middle">
+      <h2 class="text-xl font-semibold fontInter text-center py-5"><b v-if="form2.valores_da_api.data">veiculos em conserto do : {{form2.valores_da_api.data[0].user_name}} </b> 
+        <b v-if="form2.valores_da_api == 'vazio'">O usuário selecionado nao tem veiculos em conserto.</b>
+        <b v-if="form2.valores_da_api == ''">Nenhum usuário selecionado.</b></h2>      <div
+        class="overflow-hidden overflow-x-visible ring-1 ring-black ring-opacity-5 md:rounded-lg"
+      >
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead class="mb-24">
+            <tr class="text-gray-500 font-bold select-none" @click="setParams">
+              <th
+                scope="col"
+                class="px-4 text-sm cursor-pointer text-center border-r group"
+                style="width: 2%"
+              >
+
+              </th>
+
+              <th
+                v-if="formColumns.columns.problema"
+                scope="col"
+                class="px-4 text-sm cursor-pointer text-center border-r group"
+                @click="
+                  orderBy = {
+                    column: 'problema',
+                    sorting: sortTable(sortVal.problema)
+                      ? (sortVal.problema = 1)
+                      : (sortVal.problema = 0),
+                  }
+                "
+              >
+                <div class="flex">
+                  <span class="group-hover:text-indigo-800">problema</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                    />
+                  </svg>
+                </div>
+              </th>
+              <th
+                v-if="formColumns.columns.valor_cobrado"
+                scope="col"
+                class="px-4 text-sm cursor-pointer text-center border-r group"
+                @click="
+                  orderBy = {
+                    column: 'valor_cobrado',
+                    sorting: sortTable(sortVal.valor_cobrado)
+                      ? (sortVal.valor_cobrado = 1)
+                      : (sortVal.valor_cobrado = 0),
+                  }
+                "
+              >
+                <div class="flex">
+                  <span class="group-hover:text-indigo-800">Valor cobrado</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                    />
+                  </svg>
+                </div>
+              </th>
+              <th
+                v-if="formColumns.columns.veiculo"
+                scope="col"
+                class="px-4 text-sm cursor-pointer text-center border-r group"
+                @click="
+                  orderBy = {
+                    column: 'veiculo',
+                    sorting: sortTable(sortVal.veiculo)
+                      ? (sortVal.veiculo = 1)
+                      : (sortVal.veiculo = 0),
+                  }
+                "
+              >
+                <div class="flex">
+                  <span class="group-hover:text-indigo-800">Veiculo</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                    />
+                  </svg>
+                </div>
+              </th>
+              <th
+                v-if="formColumns.columns.placa"
+                scope="col"
+                class="px-4 text-sm cursor-pointer text-center border-r group"
+                @click="
+                  orderBy = {
+                    column: 'placa',
+                    sorting: sortTable(sortVal.placa)
+                      ? (sortVal.placa = 1)
+                      : (sortVal.placa = 0),
+                  }
+                "
+              >
+                <div class="flex">
+                  <span class="group-hover:text-indigo-800">placa</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                    />
+                  </svg>
+                </div>
+              </th>
+
+              <th
+                v-if="formColumns.columns.data_finalizacao"
+                scope="col"
+                class="px-4 text-sm cursor-pointer text-center border-r group"
+                @click="
+                  orderBy = {
+                    column: 'data_finalizacao',
+                    sorting: sortTable(sortVal.data_finalizacao)
+                      ? (sortVal.data_finalizacao = 1)
+                      : (sortVal.data_finalizacao = 0),
+                  }
+                "
+              >
+                <div class="flex">
+                  <span class="group-hover:text-indigo-800">Data de finalizacao do conserto</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 ml-auto group-hover:text-indigo-800"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"
+                    />
+                  </svg>
+                </div>
+              </th>
+              </tr>
+              
+
+          </thead>
+          <tbody class="divide-y divide-gray-200 bg-white">
+            <tr
+              v-for="(data, key) in form2.valores_da_api.data"
+              :key="key"
+              class="hover:bg-indigo-50/20"
+              :class="{ 'bg-gray-50': key % 2 }"
+            >
+              <td class="whitespace-nowrap py-6 pl-4 pr-3 text-sm sm:pl-6">
+                <div class="flex items-center">
+                  <div>
+                    <SlideUpDown v-model="DeleteSelect" :duration="300">
+                      <Checkbox
+                        inputId="id"
+                        name="selected"
+                        :value="data?.id"
+                        v-model="selected"
+                      />
+                    </SlideUpDown>
+                  </div>
+                </div>
+              </td>
+
+              <td
+                v-if="formColumns?.columns?.problema"
+                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+              >
+                <div class="flex items-center">
+                  <div>
+                    <div class="font-medium text-gray-900">{{ data?.problema }}</div>
+                  </div>
+                </div>
+              </td>
+              <td
+                v-if="formColumns?.columns?.valor_cobrado"
+                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+              >
+                <div class="flex items-center">
+                  <div>
+                    <div class="font-medium text-gray-900">R${{ data?.valor_cobrado }}</div>
+                  </div>
+                </div>
+              </td>
+              <td
+                v-if="formColumns?.columns?.veiculo"
+                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+              >
+                <div class="flex items-center">
+                  <div>
+                    <div class="font-medium text-gray-900">{{ data?.veiculo }}</div>
+                  </div>
+                </div>
+              </td>
+              <td
+                v-if="formColumns?.columns?.placa"
+                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+              >
+                <div class="flex items-center">
+                  <div>
+                    <div class="font-medium text-gray-900">{{ data?.placa }}</div>
+                  </div>
+                </div>
+              </td>
+
+              <td
+                v-if="formColumns?.columns?.data_finalizacao"
+                class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6"
+              >
+                <div class="flex items-center">
+                  <div>
+                    <div class="font-medium text-gray-900">{{ data?.data_finalizacao }}</div>
+                  </div>
+                </div>
+              </td>
+
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <Pagination
+    :links="dataTable"
+    :orderBy="props.Filtros.orderBy"
+    :limit="props.Filtros.limit"
+  />
+  <Delete v-model:open="openDelTodos" @del="delTodos" />
+  <Delete v-model:open="openDelSelect" @del="del" />
+  <Restaurar v-model:open="openRestaurarTodos" @del="RestaurarTodos" />
+</div>
 </template>
 
 <script setup>
@@ -296,7 +574,8 @@ const _ = require("lodash");
 
 const props = defineProps({
   dataTable: Object,
-
+  categoria: String,
+	Users: Object,
   Filtros: Object,
   Registros: Object,
 });
@@ -331,6 +610,10 @@ const statusOption = [
   { name: "Inativo", value: "1" },
 ];
 
+const Users = $propsPage?.value?.Users?.map((val) => {
+	return { name: val.name, value: val.id };
+	});
+
 const sortVal = {
   problema: 1,
   valor_cobrado: 1,
@@ -358,6 +641,10 @@ const form2 = useForm({
   placa: props.Filtros?.placa || null,
   data_finalizacao: props.Filtros?.data_finalizacao || null,
   limparFiltros: "",
+  categoria: props.categoria,
+  usuario_id: "",
+  usuario_nome: "",
+  valores_da_api: '',
 });
 
 function validateColumnsVisibility(column) {
@@ -404,6 +691,22 @@ function del() {
   selected.value = "";
   Inertia.post(route("deleteSelected.ConfigCarros", { id: valor.value }));
 }
+
+function chamadaAPI(){
+  let usuario_id = form2.usuario_id.value;
+  axios.get(`/buscarDadosConserto/${usuario_id}`)
+        .then(response => {
+            form2.valores_da_api = response;
+          if(form2.valores_da_api.data.length == 0){
+            form2.valores_da_api = 'vazio';
+          }
+            console.log(form2.valores_da_api);
+        })
+        .catch(error => {
+            
+        });
+}
+
 function delTodos() {
   Inertia.post(route("deletarTodos.ConfigCarros"));
 }

@@ -3,7 +3,7 @@
 	  
 	
 	
-	  <DataTable :dataTable="minhasCompras" :Filtros="Filtros" :Registros="Registros"  />
+	  <DataTable :dataTable="minhasCompras" :categoria="categoria" :Filtros="Filtros" :Registros="Registros"  />
 	</template>
 	
 	<script setup>
@@ -17,6 +17,8 @@ const props = defineProps({
     minhasCompras: Object,	
     Filtros: Object,
     Registros: Object,
+	categoria: String,
+	Users: Object,
 });
 
 const logCarregamento = () => {
