@@ -240,7 +240,7 @@
       <div class="mt-4 flex flex-col max-md:px-2 py-1 rounded-lg shadow-sm">
     <div class="inline-block min-w-full py-2 align-middle">
       <h2 class="text-xl font-semibold fontInter text-center py-5"><b v-if="form2.valores_da_api.data">veiculos comprados do : {{form2.valores_da_api.data[0].user_name}} </b> 
-        <b v-if="form2.valores_da_api == 'vazio'">O usuário selecionado nao tem alugueis.</b>
+        <b v-if="form2.valores_da_api == 'vazio'">O usuário selecionado nao tem alugueis nessa empresa.</b>
         <b v-if="form2.valores_da_api == ''">Nenhum usuário selecionado.</b></h2>
 
       <div
